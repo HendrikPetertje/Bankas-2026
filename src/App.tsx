@@ -1,14 +1,15 @@
 import { useState } from 'react';
+import FrontDoor from './slides/FrontDoor/FrontDoor';
 
 type SlideId = 'front' | 'welcome' | 'info' | 'program' | 'contact';
 
 function App() {
-  const [activeSlide] = useState<SlideId>('front');
+  const [activeSlide, setSlide] = useState<SlideId>('front');
 
   const renderSlide = () => {
     switch (activeSlide) {
       case 'front':
-        return <div>front</div>;
+        return <FrontDoor onNavigate={setSlide} />;
       case 'welcome':
         return <div>welcome</div>;
       case 'info':

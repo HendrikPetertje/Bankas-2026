@@ -40,3 +40,21 @@ i {
   font-family: var(--font-display);
   font-style: normal;
 }
+
+@keyframes drift {
+  0% {
+    translate: -100% 0;
+  }
+  100% {
+    translate: calc(100vw + 100%) 0;
+  }
+}
+
+@keyframes drift-reverse {
+  0% {
+    translate: calc(100vw + 100%) 0;
+  }
+  100% {
+    translate: -100% 0;
+  }
+}
