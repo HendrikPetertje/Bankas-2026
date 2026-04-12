@@ -1,13 +1,22 @@
 schema: spec-driven
 
-# Project context (optional)
-# This is shown to AI when creating artifacts.
-# Add your tech stack, conventions, style guides, domain knowledge, etc.
-# Example:
-#   context: |
-#     Tech stack: TypeScript, React, Node.js
-#     We use conventional commits
-#     Domain: e-commerce platform
+context: |
+  Project: Konungens Rike — a children's summer camp website (Baptistkyrkan Sundsvall & Bilda).
+  See PROJECT_OUTLINE.md for full design: slides, color palette, games, and file structure.
+
+  Tech stack: React 19, TypeScript 6, Vite 8, Tailwind CSS v4, Biome. Package manager is pnpm.
+  All styles via Tailwind. No router — navigation is useState<Slide> in App.tsx.
+  All user-facing content is in Swedish. Hosted on GitHub Pages (no SSR).
+
+  Conventions:
+  - After every file change, run: pnpm build && pnpm lint:fix
+  - Biome is the only linter/formatter (no ESLint, no Prettier)
+  - pnpm lint uses --error-on-warnings — Biome warnings fail the check
+  - Tailwind v4 theme lives in src/index.css (@theme block), not a JS config
+  - Use import type for type-only imports (verbatimModuleSyntax is on)
+  - Body font: Nunito (font-body). Display font: Playwrite IE (font-display)
+  - <em> and <i> use the display font with font-style: normal
+  - Rose Pine Dawn palette + extra colors (earth, edge-light) defined as Tailwind tokens
 
 # Per-artifact rules (optional)
 # Add custom rules for specific artifacts.
