@@ -1,73 +1,50 @@
-# React + TypeScript + Vite
+<p align="center">
+  <img src="docs/logo-small.png" alt="Konungens Rike" width="280" />
+</p>
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+# Bänkås 2026 — Konungens Rike
 
-Currently, two official plugins are available:
+Website for a children's summer camp in northern Sweden, organized by Baptistkyrkan Sundsvall & Bilda. The site is styled as a five-page storybook: each page features an illustrated scene, camp information in Swedish, and a hidden mini-game.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+See `PROJECT_OUTLINE.md` for the full design.
 
-## React Compiler
+<p align="center">
+  <img src="docs/the-door-cutout.png" alt="The Door" width="500" />
+</p>
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Stack
 
-## Expanding the ESLint configuration
+React 19, TypeScript 6, Vite 8, Tailwind CSS v4, Biome. Hosted on GitHub Pages.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Getting started
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```sh
+pnpm install
+pnpm dev        # starts on http://localhost:3000
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Scripts
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+| Script          | What it does                                   |
+| --------------- | ---------------------------------------------- |
+| `pnpm dev`      | Start the dev server (port 3000)               |
+| `pnpm build`    | Type-check (`tsc -b`) then build for production|
+| `pnpm preview`  | Preview the production build locally           |
+| `pnpm lint`     | Run Biome checks (warnings are errors)         |
+| `pnpm lint:fix` | Auto-fix lint and format issues                |
+| `pnpm format`   | Format all files with Biome                    |
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+## Styling
+
+All styles are managed through Tailwind CSS v4. Theme tokens (colors, fonts) live in `src/index.css` inside a `@theme` block. There is no `tailwind.config.js`.
+
+The color palette is Rose Pine Dawn with two extra project colors (`earth`, `edge-light`). Use semantic token names (`bg-base`, `text-pine`), not raw hex values.
+
+Two fonts are loaded via `@fontsource-variable`:
+
+- **Nunito** (`font-body`) — body text
+- **Playwrite Ireland** (`font-display`) — headings and decorative text; also used for `<em>` and `<i>` in place of italic Nunito
+
+## Change tracking
+
+Changes are planned and tracked with OpenSpec in `openspec/`. Use the `/opsx-*` commands to propose, implement, and archive changes.
