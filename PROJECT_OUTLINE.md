@@ -59,7 +59,7 @@ colors — forests, tunnels, mountains, coastal cities.
 
 | Token         | Hex       | Usage                                      |
 | ------------- | --------- | ------------------------------------------ |
-| earth         | `#312b1d` | Underground/cave backgrounds (page 2 base) |
+| earth         | `#312b1d` | Dark accent backgrounds                    |
 | edge-light    | `#fafafa` | Image edge fade (all pages except forest)  |
 
 All colors are defined in the Tailwind config as semantic tokens so that
@@ -90,8 +90,8 @@ useState<Slide>('front')
 
 - **Page 1 → 2**: clicking the door triggers a zoom + flash animation
   (~2 s CSS animation class, then state swap to `'welcome'`).
-- **Pages 2–5**: left/right arrow buttons with a fade-to-black CSS transition.
-- Page 1 has no back arrow. Page 5 has no forward arrow.
+- **Pages 2–5**: left/right arrow buttons placed below the main illustration
+  on each slide. Page 2 has no back arrow. Page 5 has no forward arrow.
 
 ### Slide layout (shared)
 
@@ -111,7 +111,6 @@ Content order per slide:
 - Images are provided externally — the code renders `<img>` elements with
   styling conventions:
   - Edges fade to `#fafafa` by default.
-  - The forest image (page 2) fades to `#312b1d` at the bottom.
 - All images referenced from `public/images/` or `src/assets/`.
 
 ---
@@ -128,14 +127,15 @@ Content order per slide:
 
 ### Slide 2 — "The Forest" (`welcome`)
 
-- **Logo**: "Konungens Rike" at the top.
-- **Image**: Forest scene — mountain in the distance, dragon in the sky.
-  Background above/beside the image is white (`#fafafa`). Below the forest
-  floor line the background turns to earth (`#312b1d`) with cave-wall
-  details flanking the text.
-- **Text**: 1.5-paragraph camp introduction, displayed in a "tunnel" cutout
-  in the underground area.
-- **Game trigger**: A floating magnifying glass GIF below ground level.
+- **Logo**: "Konungens Rike" at the top of the slide.
+- **Text**: 1.5-paragraph camp introduction, displayed in a block with the
+  page background color (`base`). Small detail images (dragons, birds, fantasy
+  creatures) float and animate around the text block.
+- **Image**: Forest scene — mountain in the distance. Bottom-aligned below
+  the text block. Background above/beside the image is white (`#fafafa`).
+- **Navigation**: Prev/next arrows below the main illustration (no back
+  arrow on this slide since it's the first navigable page).
+- **Game trigger**: Hidden element within the forest illustration.
 - **Game — "Pack Your Bag"** (matching/memory):
   Modal styled as an open backpack / bag of holding. Cards show paired
   items (string → bow, shield → sword, cheese → sandwich, etc.). Kids
