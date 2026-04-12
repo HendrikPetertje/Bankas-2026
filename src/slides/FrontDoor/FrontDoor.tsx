@@ -22,13 +22,7 @@ const floatingDetails = [
   { src: smallFlock, alt: 'Fåglar', duration: '22s', delay: '12s', top: '75%', maxWidth: 132, reverse: true },
 ];
 
-type TransitionPhase = 'idle' | 'phase1' | 'phase2';
-
-function getOverlayColor(phase: TransitionPhase): string {
-  if (phase === 'idle') return 'rgba(252, 226, 80, 0)';
-  if (phase === 'phase1') return '#fce250';
-  return 'var(--color-overlay)';
-}
+type TransitionPhase = 'idle' | 'active';
 
 export default function FrontDoor({ onNavigate }: FrontDoorProps) {
   const [activeOverlay, setActiveOverlay] = useState(0);
@@ -53,16 +47,11 @@ export default function FrontDoor({ onNavigate }: FrontDoorProps) {
 
   const handleDoorClick = () => {
     if (transitionRef.current !== 'idle') return;
-    transitionRef.current = 'phase1';
-    setTransition('phase1');
+    transitionRef.current = 'active';
+    setTransition('active');
 
     setTimeout(() => {
-      transitionRef.current = 'phase2';
-      setTransition('phase2');
-
-      setTimeout(() => {
-        onNavigate('welcome');
-      }, 2000);
+      onNavigate('welcome');
     }, 2000);
   };
 
@@ -98,8 +87,8 @@ export default function FrontDoor({ onNavigate }: FrontDoorProps) {
         className="relative z-20 w-full max-w-2xl px-4"
         style={{
           transformOrigin: '50% 63%',
-          transform: transition !== 'idle' ? 'scale(2.5)' : 'scale(1)',
-          transition: 'transform 4s ease-in',
+          transform: transition === 'active' ? 'scale(2.5)' : 'scale(1)',
+          transition: 'transform 2s ease-in',
         }}
       >
         <img
@@ -127,7 +116,7 @@ export default function FrontDoor({ onNavigate }: FrontDoorProps) {
           alt=""
           className="pointer-events-none absolute inset-0 z-10 h-full w-full"
           style={{
-            opacity: doorHovered || transition !== 'idle' ? 1 : 0,
+            opacity: doorHovered || transition === 'active' ? 1 : 0,
             transition: 'opacity 0.3s ease-in',
           }}
         />
@@ -155,7 +144,7 @@ export default function FrontDoor({ onNavigate }: FrontDoorProps) {
       <div
         className="fixed inset-0 z-50 pointer-events-none"
         style={{
-          backgroundColor: getOverlayColor(transition),
+          backgroundColor: transition === 'active' ? '#fce250' : 'rgba(252, 226, 80, 0)',
           transition: 'background-color 2s ease-in-out',
         }}
       />
