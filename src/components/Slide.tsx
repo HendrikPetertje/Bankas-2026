@@ -66,7 +66,7 @@ export default function Slide({
       {/* Picture slot with zoom transition — intrinsic size only */}
       <div
         ref={pictureRef}
-        className="flex-shrink-0"
+        className="flex-shrink-0 px-4 md:px-8"
         style={{
           transform: getPictureScale(),
           transition: transitioning ? 'transform 2s ease-in-out' : 'none',
