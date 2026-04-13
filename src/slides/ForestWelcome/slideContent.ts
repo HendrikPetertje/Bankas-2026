@@ -1,4 +1,4 @@
-export const welcomeContent = `**Lägret för dig som vill upptäcka en annan värld.**
+export const welcomeContent = `**Lägret för dig som vill upptäcka en annan värld.**  
 Jesus sa:
 > "Himmelriket är som en skatt som är gömd i en åker."
 
