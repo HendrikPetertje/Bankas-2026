@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
-import Markdown from 'react-markdown';
 import type { Components } from 'react-markdown';
+import Markdown from 'react-markdown';
 import type { SlideId } from '../../App';
 import Slide from '../../components/Slide';
 import background from './images/background.png';

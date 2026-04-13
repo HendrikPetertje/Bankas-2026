@@ -85,6 +85,30 @@ Navigation actions SHALL be blocked while a transition is in progress. The total
 - **WHEN** the user clicks a navigation button while a transition is already in progress
 - **THEN** the click is ignored and no additional transition starts
 
+### Requirement: Content slot sky gradient background
+
+The content slot `<div>` SHALL render with a `linear-gradient(170deg, #add5f0 0%, #add5f000 60%)` background applied via an inline `style` prop. The gradient transitions from sky blue (`#add5f0`) at the top to fully transparent at ~60% height, at a `170deg` angle (slightly off-vertical). The transparent stop SHALL use `#add5f000` (same hue at alpha 0) rather than CSS `transparent` to avoid grey interpolation artefacts. The underlying `bg-edge-light` background remains visible beneath the gradient.
+
+#### Scenario: Gradient visible at top of content area
+
+- **WHEN** any slide renders using the `Slide` shell
+- **THEN** the top of the content area shows a sky-blue tint that fades smoothly to transparent by ~60% of the content height
+
+#### Scenario: Gradient does not affect layout
+
+- **WHEN** the gradient background is applied
+- **THEN** no layout shifts occur — content position, scroll behaviour, and picture slot position are unchanged
+
+#### Scenario: Gradient angle is not perfectly vertical
+
+- **WHEN** the gradient is rendered
+- **THEN** the gradient direction is `170deg`, not `180deg`
+
+#### Scenario: Transparent stop uses same hue
+
+- **WHEN** the gradient is rendered
+- **THEN** the transparent stop uses `#add5f000` rather than CSS `transparent`, avoiding grey interpolation artefacts
+
 ### Requirement: SlideNav rendered inside Slide
 
 The `Slide` component SHALL render a `SlideNav` component, passing it `activeSlide`, `onNavigate`, and `transitioning` props. The nav is rendered after the picture slot in the DOM, using sticky positioning to stay at the bottom.

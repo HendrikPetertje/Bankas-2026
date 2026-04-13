@@ -61,7 +61,12 @@ export default function Slide({
   return (
     <div className="relative flex min-h-[100svh] flex-col bg-edge-light overflow-y-auto">
       {/* Content slot — expands to fill available space */}
-      <div className="flex-1">{children}</div>
+      <div
+        className="flex-1"
+        style={{ background: 'linear-gradient(170deg, #add5f0 0%, #add5f000 60%)' }}
+      >
+        {children}
+      </div>
 
       {/* Picture slot with zoom transition — intrinsic size only */}
       <div
