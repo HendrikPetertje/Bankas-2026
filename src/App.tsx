@@ -33,12 +33,12 @@ function App() {
       setTimeout(() => {
         setDipToActive(false);
         setSlide(target);
-        setTransitionDirection(null);
         window.scrollTo(0, 0);
 
         // After 2s dipFrom on the new slide, finish transitioning
         setTimeout(() => {
           setTransitioning(false);
+          setTransitionDirection(null);
           transitioningRef.current = false;
         }, 2000);
       }, 2000);

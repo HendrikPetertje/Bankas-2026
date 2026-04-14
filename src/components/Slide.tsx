@@ -26,11 +26,18 @@ export default function Slide({
   transitionDirection,
   dipToActive,
 }: SlideProps) {
-  // dipFrom: starts opaque, fades to transparent over 2s on mount
-  const [dipFromVisible, setDipFromVisible] = useState(!!dipFrom);
+  // Direction-aware overlay colors:
+  // Forward/initial: exit = dipTo, entry = dipFrom
+  // Backward: exit = dipFrom, entry = dipTo
+  const isBackward = transitionDirection === 'backward';
+  const exitColor = isBackward ? dipFrom : dipTo;
+  const entryColor = isBackward ? dipTo : dipFrom;
+
+  // Entry overlay: starts opaque, fades to transparent over 2s on mount
+  const [entryVisible, setEntryVisible] = useState(!!entryColor);
 
   useEffect(() => {
-    if (!dipFrom) return;
+    if (!entryColor) return;
     // Double-rAF: first rAF queues after React commit, second rAF fires
     // after the browser has actually painted the opaque frame. Without this
     // the browser batches mount + state update into one frame and the
@@ -38,16 +45,16 @@ export default function Slide({
     let cancelled = false;
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
-        if (!cancelled) setDipFromVisible(false);
+        if (!cancelled) setEntryVisible(false);
       });
     });
     return () => {
       cancelled = true;
     };
-  }, [dipFrom]);
+  }, [entryColor]);
 
-  // dipTo: starts transparent, becomes opaque when App signals navigate-away
-  const showDipTo = dipToActive && !!dipTo;
+  // Exit overlay: starts transparent, becomes opaque when App signals navigate-away
+  const showExit = dipToActive && !!exitColor;
 
   // Picture zoom: scale up on forward, scale down on backward
   const pictureRef = useRef<HTMLDivElement>(null);
@@ -88,26 +95,26 @@ export default function Slide({
         transitioning={transitioning}
       />
 
-      {/* dipFrom overlay — starts opaque, fades to transparent */}
-      {dipFrom && (
+      {/* Entry overlay — starts opaque, fades to transparent */}
+      {entryColor && (
         <div
           className="fixed inset-0 z-50 pointer-events-none"
           style={{
-            backgroundColor: dipFrom,
-            opacity: dipFromVisible ? 1 : 0,
+            backgroundColor: entryColor,
+            opacity: entryVisible ? 1 : 0,
             transition: 'opacity 2s ease-in-out',
           }}
         />
       )}
 
-      {/* dipTo overlay — starts transparent, becomes opaque when navigating away */}
-      {dipTo && (
+      {/* Exit overlay — starts transparent, becomes opaque when navigating away */}
+      {exitColor && (
         <div
           className="fixed inset-0 z-50 pointer-events-none"
           style={{
-            backgroundColor: dipTo,
-            opacity: showDipTo ? 1 : 0,
-            transition: showDipTo ? 'opacity 2s ease-in-out' : 'none',
+            backgroundColor: exitColor,
+            opacity: showExit ? 1 : 0,
+            transition: showExit ? 'opacity 2s ease-in-out' : 'none',
           }}
         />
       )}
