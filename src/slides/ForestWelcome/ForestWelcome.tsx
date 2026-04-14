@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import type { SlideId } from '../../App';
 import MarkdownContent from '../../components/MarkdownContent/MarkdownContent';
 import Slide from '../../components/Slide';
-import background from './images/background.png';
+import background from './images/background.jpg';
 import content1 from './images/content-1.jpg';
 import content2 from './images/content-2.jpg';
 import content3 from './images/content-3.jpg';

@@ -3,7 +3,7 @@ import smallBird from './images/small-bird.png';
 import smallCloud1 from './images/small-cloud-1.png';
 import smallCloud2 from './images/small-cloud-2.png';
 import smallFlock from './images/small-flock-of-birds.png';
-import doorBase from './images/the-door-cutout.png';
+import doorBase from './images/the-door-cutout.jpg';
 import overlay1 from './images/the-door-cutout-overlay-1.png';
 import overlay2 from './images/the-door-cutout-overlay-2.png';
 import overlay3 from './images/the-door-cutout-overlay-3.png';

@@ -8,7 +8,7 @@ import fluffyClouds from './images/fluffy-clouds.png';
 import content1 from './images/IMG_1029.jpg';
 import content2 from './images/IMG_7916.jpg';
 import content3 from './images/IMG_8492.jpg';
-import mainPicCutout from './images/main-pic-cutout.png';
+import mainPicCutout from './images/main-pic-cutout.jpg';
 import clouds1 from './images/main-pic-cutout-clouds-1.png';
 import clouds2 from './images/main-pic-cutout-clouds-2.png';
 import overlay1 from './images/main-pic-cutout-overlay-1.png';
