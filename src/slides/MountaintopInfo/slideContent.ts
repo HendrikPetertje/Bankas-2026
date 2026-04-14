@@ -25,8 +25,8 @@ Kl 14:00 bjuds alla gäster in till en avslutning med teaterföreställning och 
 Därefter är det dags att packa ihop tälten och återvända hem från äventyret.
 
 **Kostnad**  
-1500 kr per deltagare
-(Syskon nr 2 och 3: 1000 kr per deltagare)
+1400 kr per deltagare
+(Syskon nr 2: 1000 kr)
 
 _Avgiften betalas efter bekräftelse till Bänkåsvikens Framtids bankgiro 261-5961.
 Ange "Barnläger" och deltagarens namn vid betalning._`;
