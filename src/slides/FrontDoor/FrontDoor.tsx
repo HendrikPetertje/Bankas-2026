@@ -142,12 +142,11 @@ export default function FrontDoor({ onNavigate }: FrontDoorProps) {
 
       {/* Transition overlay — always mounted, starts transparent */}
       <div
-        className="fixed inset-0 z-50 pointer-events-none"
+        className="fixed inset-x-0 top-0 z-50 pointer-events-none"
         style={{
           backgroundColor: transition === 'active' ? '#fce250' : 'rgba(252, 226, 80, 0)',
           transition: 'background-color 2s ease-in-out',
-          paddingBottom: 'env(safe-area-inset-bottom)',
-          bottom: 'calc(-1 * env(safe-area-inset-bottom))',
+          bottom: '-300px',
         }}
       />
     </div>

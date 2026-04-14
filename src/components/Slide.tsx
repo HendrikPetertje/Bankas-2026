@@ -99,13 +99,12 @@ export default function Slide({
       {/* Entry overlay — starts opaque, fades to transparent */}
       {entryColor && (
         <div
-          className="fixed inset-0 z-50 pointer-events-none"
+          className="fixed inset-x-0 top-0 z-50 pointer-events-none"
           style={{
             backgroundColor: entryColor,
             opacity: entryVisible ? 1 : 0,
             transition: 'opacity 2s ease-in-out',
-            paddingBottom: 'env(safe-area-inset-bottom)',
-            bottom: 'calc(-1 * env(safe-area-inset-bottom))',
+            bottom: '-300px',
           }}
         />
       )}
@@ -113,13 +112,12 @@ export default function Slide({
       {/* Exit overlay — starts transparent, becomes opaque when navigating away */}
       {exitColor && (
         <div
-          className="fixed inset-0 z-50 pointer-events-none"
+          className="fixed inset-x-0 top-0 z-50 pointer-events-none"
           style={{
             backgroundColor: exitColor,
             opacity: showExit ? 1 : 0,
             transition: showExit ? 'opacity 2s ease-in-out' : 'none',
-            paddingBottom: 'env(safe-area-inset-bottom)',
-            bottom: 'calc(-1 * env(safe-area-inset-bottom))',
+            bottom: '-300px',
           }}
         />
       )}
