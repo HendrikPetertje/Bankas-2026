@@ -1,14 +1,129 @@
 import { useCallback, useRef, useState } from 'react';
+import LoadingScreen from './components/LoadingScreen/LoadingScreen';
+// SlideNav images
+import backImg from './components/SlideNav/images/back.png';
+import cityImg from './components/SlideNav/images/city-button.png';
+// MobileMapOverlay images
+import closeImg from './components/SlideNav/images/close-button.png';
+import doorImg from './components/SlideNav/images/door-button.png';
+import fieldImg from './components/SlideNav/images/field-button.png';
+import forestImg from './components/SlideNav/images/forest-button.png';
+import lgBackImg from './components/SlideNav/images/lg-back.png';
+import lgCityImg from './components/SlideNav/images/lg-city-button.png';
+import lgDoorImg from './components/SlideNav/images/lg-door-button.png';
+import lgFieldImg from './components/SlideNav/images/lg-field-button.png';
+import lgForestImg from './components/SlideNav/images/lg-forest-button.png';
+import lgMountainImg from './components/SlideNav/images/lg-mountain-button.png';
+import lgNextImg from './components/SlideNav/images/lg-next.png';
+import mapImg from './components/SlideNav/images/mobile-map-button.png';
+import mountainImg from './components/SlideNav/images/mountain-button.png';
+import nextImg from './components/SlideNav/images/next.png';
 import { SLIDE_ORDER } from './components/SlideNav/SlideNav';
 import CoastContact from './slides/CoastContact/CoastContact';
 import ForestWelcome from './slides/ForestWelcome/ForestWelcome';
+// ForestWelcome images
+import fwBackground from './slides/ForestWelcome/images/background.png';
+import fwContent1 from './slides/ForestWelcome/images/content-1.jpg';
+import fwContent2 from './slides/ForestWelcome/images/content-2.jpg';
+import fwContent3 from './slides/ForestWelcome/images/content-3.jpg';
+import fwLogo from './slides/ForestWelcome/images/logo.png';
+import fwOverlay1 from './slides/ForestWelcome/images/overlay-1.png';
+import fwOverlay2 from './slides/ForestWelcome/images/overlay-2.png';
+import fwOverlay3 from './slides/ForestWelcome/images/overlay-3.png';
+import fwSmallBird from './slides/ForestWelcome/images/small-bird.png';
+import fwSmallDragon from './slides/ForestWelcome/images/small-dragon.png';
+import fwSmallEagle from './slides/ForestWelcome/images/small-eagle.png';
 import FrontDoor from './slides/FrontDoor/FrontDoor';
+// FrontDoor images
+import fdSmallBird from './slides/FrontDoor/images/small-bird.png';
+import fdSmallCloud1 from './slides/FrontDoor/images/small-cloud-1.png';
+import fdSmallCloud2 from './slides/FrontDoor/images/small-cloud-2.png';
+import fdSmallFlock from './slides/FrontDoor/images/small-flock-of-birds.png';
+import fdDoorBase from './slides/FrontDoor/images/the-door-cutout.png';
+import fdOverlay1 from './slides/FrontDoor/images/the-door-cutout-overlay-1.png';
+import fdOverlay2 from './slides/FrontDoor/images/the-door-cutout-overlay-2.png';
+import fdOverlay3 from './slides/FrontDoor/images/the-door-cutout-overlay-3.png';
+import fdOverlayHover from './slides/FrontDoor/images/the-door-cutout-overlay-hover.png';
+// MountaintopInfo images
+import miDragon from './slides/MountaintopInfo/images/dragon.png';
+import miFlockOfBirds from './slides/MountaintopInfo/images/flock-of-birds.png';
+import miFluffyClouds from './slides/MountaintopInfo/images/fluffy-clouds.png';
+import miContent1 from './slides/MountaintopInfo/images/IMG_1029.jpg';
+import miContent2 from './slides/MountaintopInfo/images/IMG_7916.jpg';
+import miContent3 from './slides/MountaintopInfo/images/IMG_8492.jpg';
+import miMainPic from './slides/MountaintopInfo/images/main-pic-cutout.png';
+import miClouds1 from './slides/MountaintopInfo/images/main-pic-cutout-clouds-1.png';
+import miClouds2 from './slides/MountaintopInfo/images/main-pic-cutout-clouds-2.png';
+import miDetailOverlay1 from './slides/MountaintopInfo/images/main-pic-cutout-overlay-1.png';
+import miDetailOverlay2 from './slides/MountaintopInfo/images/main-pic-cutout-overlay-2.png';
+import miDetailOverlay3 from './slides/MountaintopInfo/images/main-pic-cutout-overlay-3.png';
+import miSmoke1 from './slides/MountaintopInfo/images/main-pic-cutout-smoke-1.png';
+import miSmoke2 from './slides/MountaintopInfo/images/main-pic-cutout-smoke-2.png';
 import MountaintopInfo from './slides/MountaintopInfo/MountaintopInfo';
 import PlainsProgram from './slides/PlainsProgram/PlainsProgram';
 
 export type SlideId = 'front' | 'welcome' | 'info' | 'program' | 'contact';
 
+const PRELOAD_ASSETS: string[] = [
+  // SlideNav
+  backImg,
+  nextImg,
+  doorImg,
+  forestImg,
+  mountainImg,
+  fieldImg,
+  cityImg,
+  mapImg,
+  // MobileMapOverlay
+  closeImg,
+  lgBackImg,
+  lgNextImg,
+  lgDoorImg,
+  lgForestImg,
+  lgMountainImg,
+  lgFieldImg,
+  lgCityImg,
+  // FrontDoor
+  fdSmallBird,
+  fdSmallCloud1,
+  fdSmallCloud2,
+  fdSmallFlock,
+  fdDoorBase,
+  fdOverlay1,
+  fdOverlay2,
+  fdOverlay3,
+  fdOverlayHover,
+  // ForestWelcome
+  fwBackground,
+  fwContent1,
+  fwContent2,
+  fwContent3,
+  fwLogo,
+  fwOverlay1,
+  fwOverlay2,
+  fwOverlay3,
+  fwSmallBird,
+  fwSmallDragon,
+  fwSmallEagle,
+  // MountaintopInfo
+  miDragon,
+  miFlockOfBirds,
+  miFluffyClouds,
+  miContent1,
+  miContent2,
+  miContent3,
+  miMainPic,
+  miClouds1,
+  miClouds2,
+  miDetailOverlay1,
+  miDetailOverlay2,
+  miDetailOverlay3,
+  miSmoke1,
+  miSmoke2,
+];
+
 function App() {
+  const [showLoader, setShowLoader] = useState(true);
   const [activeSlide, setSlide] = useState<SlideId>('front');
   const [transitioning, setTransitioning] = useState(false);
   const [transitionDirection, setTransitionDirection] = useState<'forward' | 'backward' | null>(null);
@@ -46,28 +161,33 @@ function App() {
     [activeSlide],
   );
 
+  if (showLoader) {
+    return (
+      <LoadingScreen
+        assets={PRELOAD_ASSETS}
+        onDone={() => setShowLoader(false)}
+      />
+    );
+  }
+
   const slideProps = { activeSlide, onNavigate, transitioning, transitionDirection, dipToActive };
 
-  const renderSlide = () => {
-    switch (activeSlide) {
-      case 'front':
-        return <FrontDoor onNavigate={onNavigate} />;
-      case 'welcome':
-        return <ForestWelcome {...slideProps} />;
-      case 'info':
-        return <MountaintopInfo {...slideProps} />;
-      case 'program':
-        return <PlainsProgram {...slideProps} />;
-      case 'contact':
-        return <CoastContact {...slideProps} />;
-      default: {
-        const _exhaustive: never = activeSlide;
-        return _exhaustive;
-      }
+  switch (activeSlide) {
+    case 'front':
+      return <FrontDoor onNavigate={onNavigate} />;
+    case 'welcome':
+      return <ForestWelcome {...slideProps} />;
+    case 'info':
+      return <MountaintopInfo {...slideProps} />;
+    case 'program':
+      return <PlainsProgram {...slideProps} />;
+    case 'contact':
+      return <CoastContact {...slideProps} />;
+    default: {
+      const _exhaustive: never = activeSlide;
+      return _exhaustive;
     }
-  };
-
-  return renderSlide();
+  }
 }
 
 export default App;

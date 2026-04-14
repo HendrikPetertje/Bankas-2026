@@ -56,11 +56,36 @@ export default function Slide({
   // Exit overlay: starts transparent, becomes opaque when App signals navigate-away
   const showExit = dipToActive && !!exitColor;
 
-  // Picture zoom: scale up on forward, scale down on backward
+  // Picture zoom: scale up on forward, scale down on backward.
+  //
+  // The new slide mounts with transitioning=true already set, so we must use
+  // the same double-rAF trick as the entry overlay: commit the zoomed-in frame
+  // first, then animate back to scale(1) so the transition plays in the right
+  // direction (big → normal, i.e. a "settle in" effect on entry).
   const pictureRef = useRef<HTMLDivElement>(null);
+  const [pictureSettled, setPictureSettled] = useState(false);
+
+  useEffect(() => {
+    if (!transitioning || !transitionDirection) {
+      setPictureSettled(false);
+      return;
+    }
+    let cancelled = false;
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        if (!cancelled) setPictureSettled(true);
+      });
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [transitioning, transitionDirection]);
 
   function getPictureScale(): string {
     if (!transitioning || !transitionDirection) return 'scale(1)';
+    // Before the double-rAF fires: stay at the zoomed-in state so the browser
+    // paints that frame. After it fires (pictureSettled=true): animate to normal.
+    if (pictureSettled) return 'scale(1)';
     if (transitionDirection === 'forward') return 'scale(1.8)';
     return 'scale(0.6)';
   }
