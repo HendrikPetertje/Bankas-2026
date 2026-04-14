@@ -34,6 +34,7 @@ function App() {
         setDipToActive(false);
         setSlide(target);
         setTransitionDirection(null);
+        window.scrollTo(0, 0);
 
         // After 2s dipFrom on the new slide, finish transitioning
         setTimeout(() => {

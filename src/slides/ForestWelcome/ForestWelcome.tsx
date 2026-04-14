@@ -33,9 +33,9 @@ const contentImages = [
 ];
 
 const creatures = [
-  { src: smallDragon, alt: 'Drake', duration: '20s', delay: '0s', top: '15%', maxWidth: 64, reverse: false },
-  { src: smallBird, alt: 'Fågel', duration: '14s', delay: '6s', top: '8%', maxWidth: 36, reverse: false },
-  { src: smallEagle, alt: 'Örn', duration: '18s', delay: '3s', top: '25%', maxWidth: 72, reverse: true },
+  { src: smallDragon, alt: 'Drake', duration: '20s', delay: '0s', top: '18%', maxWidth: 64, reverse: false },
+  { src: smallBird, alt: 'Fågel', duration: '14s', delay: '6s', top: '42%', maxWidth: 36, reverse: false },
+  { src: smallEagle, alt: 'Örn', duration: '18s', delay: '3s', top: '62%', maxWidth: 72, reverse: true },
 ];
 
 const markdownComponents: Components = {

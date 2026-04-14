@@ -37,8 +37,7 @@ body {
 
 em,
 i {
-  font-family: var(--font-display);
-  font-style: normal;
+  font-style: italic;
 }
 
 @keyframes drift {
