@@ -30,7 +30,7 @@
 }
 
 body {
-  background-color: var(--color-base);
+  background-color: var(--color-edge-light);
   color: var(--color-text);
   font-family: var(--font-body);
 }
@@ -44,6 +44,7 @@ i {
   0% {
     translate: -100% 0;
   }
+
   100% {
     translate: calc(100vw + 100%) 0;
   }
@@ -53,6 +54,7 @@ i {
   0% {
     translate: calc(100vw + 100%) 0;
   }
+
   100% {
     translate: -100% 0;
   }

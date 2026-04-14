@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { SlideId } from '../App';
 import SlideNav from './SlideNav/SlideNav';
 
@@ -56,42 +56,19 @@ export default function Slide({
   // Exit overlay: starts transparent, becomes opaque when App signals navigate-away
   const showExit = dipToActive && !!exitColor;
 
-  // Picture zoom: scale up on forward, scale down on backward.
-  //
-  // The new slide mounts with transitioning=true already set, so we must use
-  // the same double-rAF trick as the entry overlay: commit the zoomed-in frame
-  // first, then animate back to scale(1) so the transition plays in the right
-  // direction (big → normal, i.e. a "settle in" effect on entry).
-  const pictureRef = useRef<HTMLDivElement>(null);
-  const [pictureSettled, setPictureSettled] = useState(false);
-
-  useEffect(() => {
-    if (!transitioning || !transitionDirection) {
-      setPictureSettled(false);
-      return;
-    }
-    let cancelled = false;
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        if (!cancelled) setPictureSettled(true);
-      });
-    });
-    return () => {
-      cancelled = true;
-    };
-  }, [transitioning, transitionDirection]);
+  // Picture zoom: animate scale(1) → scale(1.8) on the *exiting* slide while
+  // the exit overlay fades in (dipToActive=true). The entering slide always
+  // starts and stays at scale(1) — no zoom needed there.
 
   function getPictureScale(): string {
-    if (!transitioning || !transitionDirection) return 'scale(1)';
-    // Before the double-rAF fires: stay at the zoomed-in state so the browser
-    // paints that frame. After it fires (pictureSettled=true): animate to normal.
-    if (pictureSettled) return 'scale(1)';
+    if (!dipToActive) return 'scale(1)';
     if (transitionDirection === 'forward') return 'scale(1.8)';
-    return 'scale(0.6)';
+    if (transitionDirection === 'backward') return 'scale(0.6)';
+    return 'scale(1)';
   }
 
   return (
-    <div className="relative flex min-h-[100svh] flex-col bg-edge-light overflow-y-auto">
+    <div className="relative flex min-h-[100svh] flex-col bg-edge-light overflow-y-auto overflow-x-clip">
       {/* Content slot — expands to fill available space */}
       <div
         className="flex-1"
@@ -102,11 +79,10 @@ export default function Slide({
 
       {/* Picture slot with zoom transition — intrinsic size only */}
       <div
-        ref={pictureRef}
         className="flex-shrink-0 px-4 md:px-8"
         style={{
           transform: getPictureScale(),
-          transition: transitioning ? 'transform 2s ease-in-out' : 'none',
+          transition: dipToActive ? 'transform 2s ease-in-out' : 'none',
           transformOrigin: 'center center',
         }}
       >
@@ -128,6 +104,8 @@ export default function Slide({
             backgroundColor: entryColor,
             opacity: entryVisible ? 1 : 0,
             transition: 'opacity 2s ease-in-out',
+            paddingBottom: 'env(safe-area-inset-bottom)',
+            bottom: 'calc(-1 * env(safe-area-inset-bottom))',
           }}
         />
       )}
@@ -140,6 +118,8 @@ export default function Slide({
             backgroundColor: exitColor,
             opacity: showExit ? 1 : 0,
             transition: showExit ? 'opacity 2s ease-in-out' : 'none',
+            paddingBottom: 'env(safe-area-inset-bottom)',
+            bottom: 'calc(-1 * env(safe-area-inset-bottom))',
           }}
         />
       )}

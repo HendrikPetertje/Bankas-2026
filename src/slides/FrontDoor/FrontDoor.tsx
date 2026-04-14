@@ -146,6 +146,8 @@ export default function FrontDoor({ onNavigate }: FrontDoorProps) {
         style={{
           backgroundColor: transition === 'active' ? '#fce250' : 'rgba(252, 226, 80, 0)',
           transition: 'background-color 2s ease-in-out',
+          paddingBottom: 'env(safe-area-inset-bottom)',
+          bottom: 'calc(-1 * env(safe-area-inset-bottom))',
         }}
       />
     </div>
