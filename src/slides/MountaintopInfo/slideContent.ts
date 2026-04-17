@@ -19,7 +19,7 @@ En fullständig packlista skickas ut innan lägret.
 Start: Lägret startar kl 10:30 onsdagen den 25 juni med incheckning.
 
 **Avslutning**  
-Lägret avslutas den 28 juni.  
+Lägret avslutas den 27 juni kl 15:00.  
 Kl 13:00 blir det grillning där föräldrar och syskon kan köpa hamburgare.  
 Kl 14:00 bjuds alla gäster in till en avslutning med teaterföreställning och glimtar från livet i riket.  
 Därefter är det dags att packa ihop tälten och återvända hem från äventyret.
