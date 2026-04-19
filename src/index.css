@@ -59,3 +59,17 @@ i {
     translate: -100% 0;
   }
 }
+
+@keyframes soccer-ball-arc {
+  0% {
+    translate: -100% 20px;
+  }
+
+  50% {
+    translate: calc(50vw) -12px;
+  }
+
+  100% {
+    translate: calc(100vw + 100%) 20px;
+  }
+}
