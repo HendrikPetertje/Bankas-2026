@@ -2,19 +2,24 @@ import type { SlideId } from '../../App';
 import closeImg from './images/close-button.png';
 import lgBackImg from './images/lg-back.png';
 import lgCityImg from './images/lg-city-button.png';
+import lgCityActiveImg from './images/lg-city-button-active.png';
 import lgDoorImg from './images/lg-door-button.png';
+import lgDoorActiveImg from './images/lg-door-button-active.png';
 import lgFieldImg from './images/lg-field-button.png';
+import lgFieldActiveImg from './images/lg-field-button-active.png';
 import lgForestImg from './images/lg-forest-button.png';
+import lgForestActiveImg from './images/lg-forest-button-active.png';
 import lgMountainImg from './images/lg-mountain-button.png';
+import lgMountainActiveImg from './images/lg-mountain-button-active.png';
 import lgNextImg from './images/lg-next.png';
 import { SLIDE_ORDER } from './SlideNav';
 
-const SLIDE_BUTTONS: { id: SlideId; src: string; alt: string }[] = [
-  { id: 'front', src: lgDoorImg, alt: 'Dörren' },
-  { id: 'welcome', src: lgForestImg, alt: 'Skogen' },
-  { id: 'info', src: lgMountainImg, alt: 'Berget' },
-  { id: 'program', src: lgFieldImg, alt: 'Fältet' },
-  { id: 'contact', src: lgCityImg, alt: 'Staden' },
+const SLIDE_BUTTONS: { id: SlideId; src: string; activeSrc: string; alt: string }[] = [
+  { id: 'front', src: lgDoorImg, activeSrc: lgDoorActiveImg, alt: 'Dörren' },
+  { id: 'welcome', src: lgForestImg, activeSrc: lgForestActiveImg, alt: 'Skogen' },
+  { id: 'info', src: lgMountainImg, activeSrc: lgMountainActiveImg, alt: 'Berget' },
+  { id: 'program', src: lgFieldImg, activeSrc: lgFieldActiveImg, alt: 'Fältet' },
+  { id: 'contact', src: lgCityImg, activeSrc: lgCityActiveImg, alt: 'Staden' },
 ];
 
 interface MobileMapOverlayProps {
@@ -82,11 +87,11 @@ export default function MobileMapOverlay({ activeSlide, onNavigate, transitionin
               onClick={() => onNavigate(btn.id)}
               disabled={transitioning}
               className={`cursor-pointer transition-all duration-200 hover:brightness-90 disabled:cursor-not-allowed ${
-                activeSlide === btn.id ? 'brightness-110 contrast-110' : 'brightness-95 contrast-95'
-              } ${btn.id === 'contact' ? 'col-span-2' : ''}`}
+                btn.id === 'contact' ? 'col-span-2' : ''
+              }`}
             >
               <img
-                src={btn.src}
+                src={activeSlide === btn.id ? btn.activeSrc : btn.src}
                 alt={btn.alt}
                 className="h-auto w-full max-w-40 rounded-2xl"
               />

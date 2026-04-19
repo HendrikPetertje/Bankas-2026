@@ -3,22 +3,27 @@ import { useCallback, useRef, useState } from 'react';
 import type { SlideId } from '../../App';
 import backImg from './images/back.png';
 import cityImg from './images/city-button.png';
+import cityActiveImg from './images/city-button-active.png';
 import doorImg from './images/door-button.png';
+import doorActiveImg from './images/door-button-active.png';
 import fieldImg from './images/field-button.png';
+import fieldActiveImg from './images/field-button-active.png';
 import forestImg from './images/forest-button.png';
+import forestActiveImg from './images/forest-button-active.png';
 import mapImg from './images/mobile-map-button.png';
 import mountainImg from './images/mountain-button.png';
+import mountainActiveImg from './images/mountain-button-active.png';
 import nextImg from './images/next.png';
 import MobileMapOverlay from './MobileMapOverlay';
 
 export const SLIDE_ORDER: SlideId[] = ['front', 'welcome', 'info', 'program', 'contact'];
 
-const SLIDE_BUTTONS: { id: SlideId; src: string; alt: string }[] = [
-  { id: 'front', src: doorImg, alt: 'Dörren' },
-  { id: 'welcome', src: forestImg, alt: 'Skogen' },
-  { id: 'info', src: mountainImg, alt: 'Berget' },
-  { id: 'program', src: fieldImg, alt: 'Fältet' },
-  { id: 'contact', src: cityImg, alt: 'Staden' },
+const SLIDE_BUTTONS: { id: SlideId; src: string; activeSrc: string; alt: string }[] = [
+  { id: 'front', src: doorImg, activeSrc: doorActiveImg, alt: 'Dörren' },
+  { id: 'welcome', src: forestImg, activeSrc: forestActiveImg, alt: 'Skogen' },
+  { id: 'info', src: mountainImg, activeSrc: mountainActiveImg, alt: 'Berget' },
+  { id: 'program', src: fieldImg, activeSrc: fieldActiveImg, alt: 'Fältet' },
+  { id: 'contact', src: cityImg, activeSrc: cityActiveImg, alt: 'Staden' },
 ];
 
 interface SlideNavProps {
@@ -46,6 +51,7 @@ function computeScales(mouseX: number, itemCenters: number[]): number[] {
 interface DockItem {
   key: string;
   src: string;
+  activeSrc?: string;
   alt: string;
   onClick: () => void;
   disabled: boolean;
@@ -84,6 +90,7 @@ function DesktopDock({ activeSlide, onNavigate, transitioning }: SlideNavProps) 
     ...SLIDE_BUTTONS.map((btn) => ({
       key: btn.id,
       src: btn.src,
+      activeSrc: btn.activeSrc,
       alt: btn.alt,
       onClick: () => onNavigate(btn.id),
       disabled: transitioning,
@@ -138,9 +145,7 @@ function DesktopDock({ activeSlide, onNavigate, transitioning }: SlideNavProps) 
               type="button"
               onClick={item.onClick}
               disabled={item.disabled}
-              className={`cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed hover:brightness-90 ${
-                item.isActive ? 'brightness-110 contrast-110' : 'brightness-95 contrast-95'
-              }`}
+              className="cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed hover:brightness-90"
               style={{
                 transform: `scale(${scale})`,
                 transition: 'transform 150ms ease-out',
@@ -148,7 +153,7 @@ function DesktopDock({ activeSlide, onNavigate, transitioning }: SlideNavProps) 
               }}
             >
               <img
-                src={item.src}
+                src={item.isActive && item.activeSrc ? item.activeSrc : item.src}
                 alt={item.alt}
                 className={item.imgClass}
               />

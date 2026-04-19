@@ -3,23 +3,45 @@ import LoadingScreen from './components/LoadingScreen/LoadingScreen';
 // SlideNav images
 import backImg from './components/SlideNav/images/back.png';
 import cityImg from './components/SlideNav/images/city-button.png';
+import cityActiveImg from './components/SlideNav/images/city-button-active.png';
 // MobileMapOverlay images
 import closeImg from './components/SlideNav/images/close-button.png';
 import doorImg from './components/SlideNav/images/door-button.png';
+import doorActiveImg from './components/SlideNav/images/door-button-active.png';
 import fieldImg from './components/SlideNav/images/field-button.png';
+import fieldActiveImg from './components/SlideNav/images/field-button-active.png';
 import forestImg from './components/SlideNav/images/forest-button.png';
+import forestActiveImg from './components/SlideNav/images/forest-button-active.png';
 import lgBackImg from './components/SlideNav/images/lg-back.png';
 import lgCityImg from './components/SlideNav/images/lg-city-button.png';
+import lgCityActiveImg from './components/SlideNav/images/lg-city-button-active.png';
 import lgDoorImg from './components/SlideNav/images/lg-door-button.png';
+import lgDoorActiveImg from './components/SlideNav/images/lg-door-button-active.png';
 import lgFieldImg from './components/SlideNav/images/lg-field-button.png';
+import lgFieldActiveImg from './components/SlideNav/images/lg-field-button-active.png';
 import lgForestImg from './components/SlideNav/images/lg-forest-button.png';
+import lgForestActiveImg from './components/SlideNav/images/lg-forest-button-active.png';
 import lgMountainImg from './components/SlideNav/images/lg-mountain-button.png';
+import lgMountainActiveImg from './components/SlideNav/images/lg-mountain-button-active.png';
 import lgNextImg from './components/SlideNav/images/lg-next.png';
 import mapImg from './components/SlideNav/images/mobile-map-button.png';
 import mountainImg from './components/SlideNav/images/mountain-button.png';
+import mountainActiveImg from './components/SlideNav/images/mountain-button-active.png';
 import nextImg from './components/SlideNav/images/next.png';
 import { SLIDE_ORDER } from './components/SlideNav/SlideNav';
 import CoastContact from './slides/CoastContact/CoastContact';
+// CoastContact images
+import ccBilda from './slides/CoastContact/images/bilda.png';
+import ccClouds from './slides/CoastContact/images/clouds.png';
+import ccFlockOfPigeons from './slides/CoastContact/images/flock-of-pigeons.png';
+import ccContent1 from './slides/CoastContact/images/IMG_7381.jpg';
+import ccContent2 from './slides/CoastContact/images/IMG_7552.jpg';
+import ccContent3 from './slides/CoastContact/images/IMG_8034.jpg';
+import ccMainPic from './slides/CoastContact/images/main-pic.jpg';
+import ccOverlay1 from './slides/CoastContact/images/main-pic-overlay-1.png';
+import ccOverlay2 from './slides/CoastContact/images/main-pic-overlay-2.png';
+import ccOverlay3 from './slides/CoastContact/images/main-pic-overlay-3.png';
+import ccSoccerBall from './slides/CoastContact/images/soccer-ball.png';
 import ForestWelcome from './slides/ForestWelcome/ForestWelcome';
 // ForestWelcome images
 import fwBackground from './slides/ForestWelcome/images/background.jpg';
@@ -69,20 +91,30 @@ const PRELOAD_ASSETS: string[] = [
   backImg,
   nextImg,
   doorImg,
+  doorActiveImg,
   forestImg,
+  forestActiveImg,
   mountainImg,
+  mountainActiveImg,
   fieldImg,
+  fieldActiveImg,
   cityImg,
+  cityActiveImg,
   mapImg,
   // MobileMapOverlay
   closeImg,
   lgBackImg,
   lgNextImg,
   lgDoorImg,
+  lgDoorActiveImg,
   lgForestImg,
+  lgForestActiveImg,
   lgMountainImg,
+  lgMountainActiveImg,
   lgFieldImg,
+  lgFieldActiveImg,
   lgCityImg,
+  lgCityActiveImg,
   // FrontDoor
   fdSmallBird,
   fdSmallCloud1,
@@ -120,6 +152,18 @@ const PRELOAD_ASSETS: string[] = [
   miDetailOverlay3,
   miSmoke1,
   miSmoke2,
+  // CoastContact
+  ccBilda,
+  ccClouds,
+  ccFlockOfPigeons,
+  ccContent1,
+  ccContent2,
+  ccContent3,
+  ccMainPic,
+  ccOverlay1,
+  ccOverlay2,
+  ccOverlay3,
+  ccSoccerBall,
 ];
 
 function App() {
