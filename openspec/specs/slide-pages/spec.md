@@ -25,14 +25,14 @@ A `MountaintopInfo` component SHALL exist at `src/slides/MountaintopInfo/Mountai
 - **WHEN** the active slide is 'info'
 - **THEN** the MountaintopInfo component renders inside a Slide shell with placeholder content
 
-### Requirement: PlainsProgram placeholder component
+### Requirement: PlainsProgram component
 
-A `PlainsProgram` component SHALL exist at `src/slides/PlainsProgram/PlainsProgram.tsx`. It SHALL use the `Slide` shell component and render placeholder content as children and picture props.
+A `PlainsProgram` component SHALL exist at `src/slides/PlainsProgram/PlainsProgram.tsx`. It SHALL use the `Slide` shell component and render the full program slide content: title "Dagsprogram", daily schedule text via `react-markdown`, three animated background layers (big clouds, small clouds, flock of birds) in the children slot, and `main-pic.jpg` with chimney smoke overlays and sequential detail overlays in the picture slot.
 
-#### Scenario: PlainsProgram renders with Slide shell
+#### Scenario: PlainsProgram renders with full content
 
 - **WHEN** the active slide is 'program'
-- **THEN** the PlainsProgram component renders inside a Slide shell with placeholder content
+- **THEN** the PlainsProgram component renders inside a Slide shell with the daily schedule heading, markdown content, animated background layers, and the main picture with animated overlays
 
 ### Requirement: CoastContact placeholder component
 
