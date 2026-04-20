@@ -16,6 +16,7 @@ import overlay2 from './images/main-pic-cutout-overlay-2.png';
 import overlay3 from './images/main-pic-cutout-overlay-3.png';
 import smoke1 from './images/main-pic-cutout-smoke-1.png';
 import smoke2 from './images/main-pic-cutout-smoke-2.png';
+import hoverOverlay from './images/mountain-mouse-over-overlay.png';
 import { infoContent } from './slideContent';
 
 interface MountaintopInfoProps {
@@ -49,12 +50,21 @@ export default function MountaintopInfo({
 }: MountaintopInfoProps) {
   // Cloud overlay: crossfade between clouds-1 and clouds-2 every 4s, 1s transition
   const [showClouds2, setShowClouds2] = useState(false);
+  const [hovered, setHovered] = useState(false);
+  const [clicked, setClicked] = useState(false);
+  const [tooltipVisible, setTooltipVisible] = useState(false);
 
   useEffect(() => {
     const interval = setInterval(() => {
       setShowClouds2((prev) => !prev);
     }, 4000);
     return () => clearInterval(interval);
+  }, []);
+
+  // Tooltip: fades in after 3s
+  useEffect(() => {
+    const t = setTimeout(() => setTooltipVisible(true), 3000);
+    return () => clearTimeout(t);
   }, []);
 
   // Smoke overlay: crossfade between smoke-1 and smoke-2 every 3s, 600ms transition
@@ -109,67 +119,98 @@ export default function MountaintopInfo({
       transitionDirection={transitionDirection}
       dipToActive={dipToActive}
       picture={
-        <div className="relative w-full">
-          {/* Base image */}
-          <img
-            src={mainPicCutout}
-            alt="Bergstoppen"
-            className="block w-full"
-          />
-
-          {/* Cloud overlays (lowest z) */}
-          <img
-            src={clouds1}
-            alt=""
-            className="pointer-events-none absolute inset-0 h-full w-full"
-            style={{
-              opacity: showClouds2 ? 0 : 1,
-              transition: 'opacity 1000ms ease-in-out',
-            }}
-          />
-          <img
-            src={clouds2}
-            alt=""
-            className="pointer-events-none absolute inset-0 h-full w-full"
-            style={{
-              opacity: showClouds2 ? 1 : 0,
-              transition: 'opacity 1000ms ease-in-out',
-            }}
-          />
-
-          {/* Smoke overlays (middle z) */}
-          <img
-            src={smoke1}
-            alt=""
-            className="pointer-events-none absolute inset-0 h-full w-full"
-            style={{
-              opacity: showSmoke2 ? 0 : 1,
-              transition: 'opacity 600ms ease-in-out',
-            }}
-          />
-          <img
-            src={smoke2}
-            alt=""
-            className="pointer-events-none absolute inset-0 h-full w-full"
-            style={{
-              opacity: showSmoke2 ? 1 : 0,
-              transition: 'opacity 600ms ease-in-out',
-            }}
-          />
-
-          {/* Detail overlays (highest z) */}
-          {detailOverlays.map((src, i) => (
+        <div>
+          <div className="relative w-full">
+            {/* Base image */}
             <img
-              key={src}
-              src={src}
+              src={mainPicCutout}
+              alt="Bergstoppen"
+              className="block w-full"
+            />
+
+            {/* Cloud overlays (lowest z) */}
+            <img
+              src={clouds1}
               alt=""
               className="pointer-events-none absolute inset-0 h-full w-full"
               style={{
-                opacity: activeDetailOverlay === i ? 1 : 0,
-                transition: 'opacity 500ms ease-in-out',
+                opacity: showClouds2 ? 0 : 1,
+                transition: 'opacity 1000ms ease-in-out',
               }}
             />
-          ))}
+            <img
+              src={clouds2}
+              alt=""
+              className="pointer-events-none absolute inset-0 h-full w-full"
+              style={{
+                opacity: showClouds2 ? 1 : 0,
+                transition: 'opacity 1000ms ease-in-out',
+              }}
+            />
+
+            {/* Smoke overlays (middle z) */}
+            <img
+              src={smoke1}
+              alt=""
+              className="pointer-events-none absolute inset-0 h-full w-full"
+              style={{
+                opacity: showSmoke2 ? 0 : 1,
+                transition: 'opacity 600ms ease-in-out',
+              }}
+            />
+            <img
+              src={smoke2}
+              alt=""
+              className="pointer-events-none absolute inset-0 h-full w-full"
+              style={{
+                opacity: showSmoke2 ? 1 : 0,
+                transition: 'opacity 600ms ease-in-out',
+              }}
+            />
+
+            {/* Detail overlays (highest z) */}
+            {detailOverlays.map((src, i) => (
+              <img
+                key={src}
+                src={src}
+                alt=""
+                className="pointer-events-none absolute inset-0 h-full w-full"
+                style={{
+                  opacity: activeDetailOverlay === i ? 1 : 0,
+                  transition: 'opacity 500ms ease-in-out',
+                }}
+              />
+            ))}
+
+            {/* Hover overlay */}
+            <img
+              src={hoverOverlay}
+              alt=""
+              className="pointer-events-none absolute inset-0 h-full w-full"
+              style={{
+                opacity: hovered || clicked ? 1 : 0,
+                transition: 'opacity 300ms ease',
+              }}
+            />
+            {/* Click target: top 45%–65%, left 47%–62% */}
+            <button
+              type="button"
+              className="absolute cursor-pointer bg-transparent border-0 p-0"
+              style={{ top: '45%', left: '47%', width: '15%', height: '20%' }}
+              onMouseEnter={() => setHovered(true)}
+              onMouseLeave={() => setHovered(false)}
+              onClick={() => {
+                setClicked(true);
+                onNavigate('program');
+              }}
+            />
+          </div>
+          <p
+            className="m-0 pb-8 text-center text-sm font-body text-text transition-opacity duration-700"
+            style={{ opacity: tooltipVisible ? 1 : 0 }}
+          >
+            Klicka på gräsängarna för att fortsätta.
+          </p>
         </div>
       }
     >

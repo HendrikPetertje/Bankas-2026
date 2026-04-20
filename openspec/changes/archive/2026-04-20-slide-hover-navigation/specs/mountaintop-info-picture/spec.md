@@ -1,3 +1,5 @@
+## ADDED Requirements
+
 ### Requirement: MountaintopInfo picture area hover overlay
 
 The MountaintopInfo picture slot SHALL render `mountain-mouse-over-overlay.png` as a hover overlay following the `slide-picture-hover-nav` spec. The click-target region SHALL be top 45%, left 47%, width 15%, height 20%. Clicking SHALL call `onNavigate('program')`.

@@ -32,7 +32,7 @@ Each slide's picture area already renders a stack of overlay images (cycling ani
 
 ### Decision: Use the slide shell's `onNavigate` callback directly
 
-The picture components already accept `onNavigate: (target: SlideId) => void`. Clicking the target region calls `onNavigate('info' | 'program' | 'contact')`. The shell handles the dip animation. No new props needed.
+The picture components already accept `onNavigate: (target: SlideId) => void`. Clicking the target region calls `onNavigate('info' | 'program' | 'contact')`. `App.tsx`'s `onNavigate` sets `dipToActive = true`, which triggers the `Slide` shell's exit overlay fade-in and picture zoom (`scale(1.8)` forward, `scale(0.6)` backward) automatically. No new props, no custom transition code — calling `onNavigate` is sufficient to get the full zoom + color dip effect.
 
 ### Decision: Tooltip below the picture, not inside it
 

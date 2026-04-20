@@ -6,6 +6,7 @@ import background from './images/background.jpg';
 import content1 from './images/content-1.jpg';
 import content2 from './images/content-2.jpg';
 import content3 from './images/content-3.jpg';
+import hoverOverlay from './images/forest-mouse-over-overlay.png';
 import logo from './images/logo.png';
 import overlay1 from './images/overlay-1.png';
 import overlay2 from './images/overlay-2.png';
@@ -46,6 +47,15 @@ export default function ForestWelcome({
 }: ForestWelcomeProps) {
   const [activeOverlay, setActiveOverlay] = useState(-1);
   const timeoutRef = useRef<ReturnType<typeof setTimeout>>(null);
+  const [hovered, setHovered] = useState(false);
+  const [clicked, setClicked] = useState(false);
+  const [tooltipVisible, setTooltipVisible] = useState(false);
+
+  // Tooltip: fades in after 3s
+  useEffect(() => {
+    const t = setTimeout(() => setTooltipVisible(true), 3000);
+    return () => clearTimeout(t);
+  }, []);
 
   // Overlay cycling: 2s visible, 4s gap, looping through 3 overlays
   useEffect(() => {
@@ -90,24 +100,54 @@ export default function ForestWelcome({
       transitionDirection={transitionDirection}
       dipToActive={dipToActive}
       picture={
-        <div className="relative w-full">
-          <img
-            src={background}
-            alt="Skogen vid Bänkåsviken"
-            className="block w-full"
-          />
-          {overlays.map((src, i) => (
+        <div>
+          <div className="relative w-full">
             <img
-              key={src}
-              src={src}
+              src={background}
+              alt="Skogen vid Bänkåsviken"
+              className="block w-full"
+            />
+            {overlays.map((src, i) => (
+              <img
+                key={src}
+                src={src}
+                alt=""
+                className="pointer-events-none absolute inset-0 h-full w-full"
+                style={{
+                  opacity: activeOverlay === i ? 1 : 0,
+                  transition: 'opacity 500ms ease-in-out',
+                }}
+              />
+            ))}
+            {/* Hover overlay */}
+            <img
+              src={hoverOverlay}
               alt=""
               className="pointer-events-none absolute inset-0 h-full w-full"
               style={{
-                opacity: activeOverlay === i ? 1 : 0,
-                transition: 'opacity 500ms ease-in-out',
+                opacity: hovered || clicked ? 1 : 0,
+                transition: 'opacity 300ms ease',
               }}
             />
-          ))}
+            {/* Click target: top 5%–30%, left 30%–55% */}
+            <button
+              type="button"
+              className="absolute cursor-pointer bg-transparent border-0 p-0"
+              style={{ top: '5%', left: '30%', width: '25%', height: '25%' }}
+              onMouseEnter={() => setHovered(true)}
+              onMouseLeave={() => setHovered(false)}
+              onClick={() => {
+                setClicked(true);
+                onNavigate('info');
+              }}
+            />
+          </div>
+          <p
+            className="m-0 pb-8 text-center text-sm font-body text-text transition-opacity duration-700"
+            style={{ opacity: tooltipVisible ? 1 : 0 }}
+          >
+            Klicka på berget för att fortsätta
+          </p>
         </div>
       }
     >

@@ -1,3 +1,5 @@
+## ADDED Requirements
+
 ### Requirement: PlainsProgram picture area hover overlay
 
 The PlainsProgram picture slot SHALL render `plains-mouse-over-overlay.png` as a hover overlay following the `slide-picture-hover-nav` spec. The click-target region SHALL be top 6%, left 22%, width 22%, height 28%. Clicking SHALL call `onNavigate('contact')`.

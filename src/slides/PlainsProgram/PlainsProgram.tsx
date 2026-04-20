@@ -14,6 +14,7 @@ import overlay2 from './images/main-pic-overlay-2.png';
 import overlay3 from './images/main-pic-overlay-3.png';
 import chimneySmoke1 from './images/main-pic-overlay-chimney-smoke-1.png';
 import chimneySmoke2 from './images/main-pic-overlay-chimney-smoke-2.png';
+import hoverOverlay from './images/plains-mouse-over-overlay.png';
 import { programContent } from './slideContent';
 
 interface PlainsProgramProps {
@@ -47,12 +48,21 @@ export default function PlainsProgram({
 }: PlainsProgramProps) {
   // Chimney smoke overlay: crossfade between smoke-1 and smoke-2 every 3s, 600ms transition
   const [showSmoke2, setShowSmoke2] = useState(false);
+  const [hovered, setHovered] = useState(false);
+  const [clicked, setClicked] = useState(false);
+  const [tooltipVisible, setTooltipVisible] = useState(false);
 
   useEffect(() => {
     const interval = setInterval(() => {
       setShowSmoke2((prev) => !prev);
     }, 3000);
     return () => clearInterval(interval);
+  }, []);
+
+  // Tooltip: fades in after 3s
+  useEffect(() => {
+    const t = setTimeout(() => setTooltipVisible(true), 3000);
+    return () => clearTimeout(t);
   }, []);
 
   // Detail overlay: sequential cycling (5s gap, 2s visible)
@@ -97,47 +107,78 @@ export default function PlainsProgram({
       transitionDirection={transitionDirection}
       dipToActive={dipToActive}
       picture={
-        <div className="relative w-full">
-          {/* Base image */}
-          <img
-            src={mainPic}
-            alt="Slätterna"
-            className="block w-full"
-          />
-
-          {/* Chimney smoke overlays (lower z) */}
-          <img
-            src={chimneySmoke1}
-            alt=""
-            className="pointer-events-none absolute inset-0 h-full w-full"
-            style={{
-              opacity: showSmoke2 ? 0 : 1,
-              transition: 'opacity 600ms ease-in-out',
-            }}
-          />
-          <img
-            src={chimneySmoke2}
-            alt=""
-            className="pointer-events-none absolute inset-0 h-full w-full"
-            style={{
-              opacity: showSmoke2 ? 1 : 0,
-              transition: 'opacity 600ms ease-in-out',
-            }}
-          />
-
-          {/* Detail overlays (higher z) */}
-          {detailOverlays.map((src, i) => (
+        <div>
+          <div className="relative w-full">
+            {/* Base image */}
             <img
-              key={src}
-              src={src}
+              src={mainPic}
+              alt="Slätterna"
+              className="block w-full"
+            />
+
+            {/* Chimney smoke overlays (lower z) */}
+            <img
+              src={chimneySmoke1}
               alt=""
               className="pointer-events-none absolute inset-0 h-full w-full"
               style={{
-                opacity: activeDetailOverlay === i ? 1 : 0,
-                transition: 'opacity 500ms ease-in-out',
+                opacity: showSmoke2 ? 0 : 1,
+                transition: 'opacity 600ms ease-in-out',
               }}
             />
-          ))}
+            <img
+              src={chimneySmoke2}
+              alt=""
+              className="pointer-events-none absolute inset-0 h-full w-full"
+              style={{
+                opacity: showSmoke2 ? 1 : 0,
+                transition: 'opacity 600ms ease-in-out',
+              }}
+            />
+
+            {/* Detail overlays (higher z) */}
+            {detailOverlays.map((src, i) => (
+              <img
+                key={src}
+                src={src}
+                alt=""
+                className="pointer-events-none absolute inset-0 h-full w-full"
+                style={{
+                  opacity: activeDetailOverlay === i ? 1 : 0,
+                  transition: 'opacity 500ms ease-in-out',
+                }}
+              />
+            ))}
+
+            {/* Hover overlay */}
+            <img
+              src={hoverOverlay}
+              alt=""
+              className="pointer-events-none absolute inset-0 h-full w-full"
+              style={{
+                opacity: hovered || clicked ? 1 : 0,
+                transition: 'opacity 300ms ease',
+              }}
+            />
+            {/* Click target: top 6%–34%, left 22%–44% */}
+            <button
+              type="button"
+              className="absolute cursor-pointer bg-transparent border-0 p-0"
+              style={{ top: '6%', left: '22%', width: '22%', height: '28%' }}
+              onMouseEnter={() => setHovered(true)}
+              onMouseLeave={() => setHovered(false)}
+              onClick={() => {
+                setClicked(true);
+                onNavigate('contact');
+              }}
+            />
+          </div>
+          <p
+            className="m-0 pb-8 text-center text-sm font-body text-text transition-opacity duration-700"
+            style={{ opacity: tooltipVisible ? 1 : 0 }}
+          >
+            Klicka på stadsslottet för att fortsätta.
+          </p>
         </div>
       }
     >
