@@ -1,7 +1,6 @@
 import { useCallback, useRef, useState } from 'react';
 import LoadingScreen from './components/LoadingScreen/LoadingScreen';
 // SlideNav images
-import backImg from './components/SlideNav/images/back.png';
 import cityImg from './components/SlideNav/images/city-button.png';
 import cityActiveImg from './components/SlideNav/images/city-button-active.png';
 // MobileMapOverlay images
@@ -12,7 +11,6 @@ import fieldImg from './components/SlideNav/images/field-button.png';
 import fieldActiveImg from './components/SlideNav/images/field-button-active.png';
 import forestImg from './components/SlideNav/images/forest-button.png';
 import forestActiveImg from './components/SlideNav/images/forest-button-active.png';
-import lgBackImg from './components/SlideNav/images/lg-back.png';
 import lgCityImg from './components/SlideNav/images/lg-city-button.png';
 import lgCityActiveImg from './components/SlideNav/images/lg-city-button-active.png';
 import lgDoorImg from './components/SlideNav/images/lg-door-button.png';
@@ -23,11 +21,9 @@ import lgForestImg from './components/SlideNav/images/lg-forest-button.png';
 import lgForestActiveImg from './components/SlideNav/images/lg-forest-button-active.png';
 import lgMountainImg from './components/SlideNav/images/lg-mountain-button.png';
 import lgMountainActiveImg from './components/SlideNav/images/lg-mountain-button-active.png';
-import lgNextImg from './components/SlideNav/images/lg-next.png';
 import mapImg from './components/SlideNav/images/mobile-map-button.png';
 import mountainImg from './components/SlideNav/images/mountain-button.png';
 import mountainActiveImg from './components/SlideNav/images/mountain-button-active.png';
-import nextImg from './components/SlideNav/images/next.png';
 import { SLIDE_ORDER } from './components/SlideNav/SlideNav';
 import CoastContact from './slides/CoastContact/CoastContact';
 // CoastContact images
@@ -88,8 +84,6 @@ export type SlideId = 'front' | 'welcome' | 'info' | 'program' | 'contact';
 
 const PRELOAD_ASSETS: string[] = [
   // SlideNav
-  backImg,
-  nextImg,
   doorImg,
   doorActiveImg,
   forestImg,
@@ -103,8 +97,6 @@ const PRELOAD_ASSETS: string[] = [
   mapImg,
   // MobileMapOverlay
   closeImg,
-  lgBackImg,
-  lgNextImg,
   lgDoorImg,
   lgDoorActiveImg,
   lgForestImg,

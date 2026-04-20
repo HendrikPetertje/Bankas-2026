@@ -69,9 +69,16 @@ export default function Slide({
 
   return (
     <div className="relative flex min-h-[100svh] flex-col bg-edge-light overflow-y-auto overflow-x-clip">
-      {/* Content slot — expands to fill available space */}
+      {/* Navigation — sticky to top */}
+      <SlideNav
+        activeSlide={activeSlide}
+        onNavigate={onNavigate}
+        transitioning={transitioning}
+      />
+
+      {/* Content slot — expands to fill available space; pt-9 offsets fixed top nav */}
       <div
-        className="flex-1"
+        className="flex-1 pt-9"
         style={{ background: 'linear-gradient(170deg, #add5f0 0%, #add5f000 60%)' }}
       >
         {children}
@@ -88,13 +95,6 @@ export default function Slide({
       >
         {picture}
       </div>
-
-      {/* Navigation — sticky to bottom, overlaps content */}
-      <SlideNav
-        activeSlide={activeSlide}
-        onNavigate={onNavigate}
-        transitioning={transitioning}
-      />
 
       {/* Entry overlay — starts opaque, fades to transparent */}
       {entryColor && (
