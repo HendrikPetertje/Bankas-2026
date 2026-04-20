@@ -17,25 +17,86 @@ Each participating slide's picture area SHALL render its hover overlay image (`*
 - **WHEN** the user has clicked the region and the navigation transition is in progress
 - **THEN** the hover overlay remains at `opacity-1` regardless of cursor position
 
-### Requirement: Percentage-based click target region
+### Requirement: Dual click target — mobile full-image, desktop precise region
 
-Each slide SHALL define its click-target as an absolutely-positioned invisible `div` inside a `relative` wrapper around the picture image. The region SHALL be expressed as percentage-based `top`, `left`, `width`, and `height` values derived from the picture's coordinate space:
+On viewports below the `md` breakpoint, the entire picture SHALL be a single transparent click target (`inset-0`), allowing fat-finger taps anywhere on the image to trigger navigation. The full-image button SHALL also respond to `onMouseEnter` / `onMouseLeave` to reveal the hover overlay.
 
-- **ForestWelcome**: top 5%, left 30%, width 25% (to 55%), height 25% (to 30%)
-- **MountaintopInfo**: top 45%, left 47%, width 15% (to 62%), height 20% (to 65%)
-- **PlainsProgram**: top 6%, left 22%, width 22% (to 44%), height 28% (to 34%)
+On viewports at or above the `md` breakpoint, the click target SHALL be a smaller absolutely-positioned button covering only the percentage-based region specific to that slide:
 
-The div SHALL have `cursor-pointer` and be transparent (`bg-transparent`). It SHALL use `onMouseEnter` / `onMouseLeave` to toggle the hover overlay and `onClick` to trigger navigation.
+- **ForestWelcome**: top 5%, left 30%, width 25%, height 25%
+- **MountaintopInfo**: top 45%, left 47%, width 15%, height 20%
+- **PlainsProgram**: top 6%, left 22%, width 22%, height 28%
 
-#### Scenario: Click target covers the correct region
+Both targets SHALL be transparent (`bg-transparent`, `border-0`, `p-0`) with `cursor-pointer`.
 
-- **WHEN** the picture is rendered at any viewport width
-- **THEN** the click target div covers the percentage-specified region of the image, scaling proportionally
+#### Scenario: Mobile tap anywhere navigates
 
-#### Scenario: Click target is invisible
+- **WHEN** the viewport is below `md` and the user taps anywhere on the picture
+- **THEN** navigation is triggered to the next slide
 
-- **WHEN** the picture renders normally
-- **THEN** the click-target div has no visible background or border
+#### Scenario: Mobile hover anywhere reveals overlay
+
+- **WHEN** the viewport is below `md` and the user hovers anywhere on the picture
+- **THEN** the hover overlay becomes visible
+
+#### Scenario: Desktop click target covers the precise region
+
+- **WHEN** the viewport is at or above `md` and the user clicks inside the percentage-specified region
+- **THEN** navigation is triggered to the next slide
+
+#### Scenario: Desktop click target is invisible
+
+- **WHEN** the picture renders on desktop
+- **THEN** the click-target button has no visible background or border
+
+### Requirement: Click triggers navigation via onNavigate callback
+
+Clicking the click-target (mobile full-image or desktop precise region) SHALL call `onNavigate` with the next slide's ID:
+
+- ForestWelcome → `'info'`
+- MountaintopInfo → `'program'`
+- PlainsProgram → `'contact'`
+
+The slide shell handles the dip animation. No custom transition logic is needed inside the picture component.
+
+#### Scenario: Click navigates to the next slide
+
+- **WHEN** the user clicks or taps the click-target region
+- **THEN** `onNavigate` is called with the correct next slide ID
+
+### Requirement: Delayed tooltip below the picture
+
+Each participating slide SHALL render a tooltip text element as a sibling below the picture container (not inside it). The tooltip SHALL be `opacity-0` on mount and transition to `opacity-1` after 3 seconds using a CSS transition, matching the front-door tooltip pattern. The text SHALL use the body font (`font-body`) and `text-text` color, centered horizontally. No top margin SHALL be applied — the tooltip sits flush against the picture's natural bottom edge, with bottom padding (`pb-8`) for breathing room.
+
+Tooltip texts:
+- ForestWelcome: "Klicka på berget för att fortsätta"
+- MountaintopInfo: "Klicka på gräsängarna för att fortsätta."
+- PlainsProgram: "Klicka på stadsslottet för att fortsätta."
+
+#### Scenario: Tooltip is hidden on mount
+
+- **WHEN** the slide first renders
+- **THEN** the tooltip text is present in the DOM but invisible (`opacity-0`)
+
+#### Scenario: Tooltip fades in after 3 seconds
+
+- **WHEN** 3 seconds have elapsed since the slide mounted
+- **THEN** the tooltip transitions to `opacity-1`
+
+### Requirement: Hover overlay asset co-location
+
+Each slide's hover overlay image SHALL be stored in the slide's own `images/` directory and imported via ES module import:
+
+- `src/slides/ForestWelcome/images/forest-mouse-over-overlay.png`
+- `src/slides/MountaintopInfo/images/mountain-mouse-over-overlay.png`
+- `src/slides/PlainsProgram/images/plains-mouse-over-overlay.png`
+
+Source files are available at `openspec/input/`.
+
+#### Scenario: Overlay image loads without 404
+
+- **WHEN** the slide renders
+- **THEN** the hover overlay image loads successfully from the co-located images directory
 
 ### Requirement: Click triggers navigation via onNavigate callback
 

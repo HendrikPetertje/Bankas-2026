@@ -160,10 +160,21 @@ export default function PlainsProgram({
                 transition: 'opacity 300ms ease',
               }}
             />
-            {/* Click target: top 6%–34%, left 22%–44% */}
+            {/* Mobile: full-image click target */}
             <button
               type="button"
-              className="absolute cursor-pointer bg-transparent border-0 p-0"
+              className="absolute inset-0 cursor-pointer bg-transparent border-0 p-0 md:hidden"
+              onMouseEnter={() => setHovered(true)}
+              onMouseLeave={() => setHovered(false)}
+              onClick={() => {
+                setClicked(true);
+                onNavigate('contact');
+              }}
+            />
+            {/* Desktop: precise click target top 6%–34%, left 22%–44% */}
+            <button
+              type="button"
+              className="absolute hidden cursor-pointer bg-transparent border-0 p-0 md:block"
               style={{ top: '6%', left: '22%', width: '22%', height: '28%' }}
               onMouseEnter={() => setHovered(true)}
               onMouseLeave={() => setHovered(false)}

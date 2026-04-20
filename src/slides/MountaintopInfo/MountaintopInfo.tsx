@@ -192,10 +192,21 @@ export default function MountaintopInfo({
                 transition: 'opacity 300ms ease',
               }}
             />
-            {/* Click target: top 45%–65%, left 47%–62% */}
+            {/* Mobile: full-image click target */}
             <button
               type="button"
-              className="absolute cursor-pointer bg-transparent border-0 p-0"
+              className="absolute inset-0 cursor-pointer bg-transparent border-0 p-0 md:hidden"
+              onMouseEnter={() => setHovered(true)}
+              onMouseLeave={() => setHovered(false)}
+              onClick={() => {
+                setClicked(true);
+                onNavigate('program');
+              }}
+            />
+            {/* Desktop: precise click target top 45%–65%, left 47%–62% */}
+            <button
+              type="button"
+              className="absolute hidden cursor-pointer bg-transparent border-0 p-0 md:block"
               style={{ top: '45%', left: '47%', width: '15%', height: '20%' }}
               onMouseEnter={() => setHovered(true)}
               onMouseLeave={() => setHovered(false)}
