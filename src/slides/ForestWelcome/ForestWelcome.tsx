@@ -100,66 +100,66 @@ export default function ForestWelcome({
       transitionDirection={transitionDirection}
       dipToActive={dipToActive}
       picture={
-        <div>
-          <div className="relative w-full">
+        <div className="relative w-full">
+          <img
+            src={background}
+            alt="Skogen vid Bänkåsviken"
+            className="block w-full"
+          />
+          {overlays.map((src, i) => (
             <img
-              src={background}
-              alt="Skogen vid Bänkåsviken"
-              className="block w-full"
-            />
-            {overlays.map((src, i) => (
-              <img
-                key={src}
-                src={src}
-                alt=""
-                className="pointer-events-none absolute inset-0 h-full w-full"
-                style={{
-                  opacity: activeOverlay === i ? 1 : 0,
-                  transition: 'opacity 500ms ease-in-out',
-                }}
-              />
-            ))}
-            {/* Hover overlay */}
-            <img
-              src={hoverOverlay}
+              key={src}
+              src={src}
               alt=""
               className="pointer-events-none absolute inset-0 h-full w-full"
               style={{
-                opacity: hovered || clicked ? 1 : 0,
-                transition: 'opacity 300ms ease',
+                opacity: activeOverlay === i ? 1 : 0,
+                transition: 'opacity 500ms ease-in-out',
               }}
             />
-            {/* Mobile: full-image click target */}
-            <button
-              type="button"
-              className="absolute inset-0 cursor-pointer bg-transparent border-0 p-0 md:hidden"
-              onMouseEnter={() => setHovered(true)}
-              onMouseLeave={() => setHovered(false)}
-              onClick={() => {
-                setClicked(true);
-                onNavigate('info');
-              }}
-            />
-            {/* Desktop: precise click target top 5%–30%, left 30%–55% */}
-            <button
-              type="button"
-              className="absolute hidden cursor-pointer bg-transparent border-0 p-0 md:block"
-              style={{ top: '5%', left: '30%', width: '25%', height: '25%' }}
-              onMouseEnter={() => setHovered(true)}
-              onMouseLeave={() => setHovered(false)}
-              onClick={() => {
-                setClicked(true);
-                onNavigate('info');
-              }}
-            />
-          </div>
-          <p
-            className="m-0 pb-8 text-center text-sm font-body text-text transition-opacity duration-700"
-            style={{ opacity: tooltipVisible ? 1 : 0 }}
-          >
-            Klicka på berget för att fortsätta
-          </p>
+          ))}
+          {/* Hover overlay */}
+          <img
+            src={hoverOverlay}
+            alt=""
+            className="pointer-events-none absolute inset-0 h-full w-full"
+            style={{
+              opacity: hovered || clicked ? 1 : 0,
+              transition: 'opacity 300ms ease',
+            }}
+          />
+          {/* Mobile: full-image click target */}
+          <button
+            type="button"
+            className="absolute inset-0 cursor-pointer bg-transparent border-0 p-0 md:hidden"
+            onMouseEnter={() => setHovered(true)}
+            onMouseLeave={() => setHovered(false)}
+            onClick={() => {
+              setClicked(true);
+              onNavigate('info');
+            }}
+          />
+          {/* Desktop: precise click target top 5%–30%, left 30%–55% */}
+          <button
+            type="button"
+            className="absolute hidden cursor-pointer bg-transparent border-0 p-0 md:block"
+            style={{ top: '5%', left: '30%', width: '25%', height: '25%' }}
+            onMouseEnter={() => setHovered(true)}
+            onMouseLeave={() => setHovered(false)}
+            onClick={() => {
+              setClicked(true);
+              onNavigate('info');
+            }}
+          />
         </div>
+      }
+      pictureFooter={
+        <p
+          className="m-0 pb-8 text-center text-sm font-body text-text transition-opacity duration-700"
+          style={{ opacity: tooltipVisible ? 1 : 0 }}
+        >
+          Klicka på berget för att fortsätta
+        </p>
       }
     >
       <div className="relative overflow-hidden">

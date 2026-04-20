@@ -6,6 +6,7 @@ import SlideNav from './SlideNav/SlideNav';
 interface SlideProps {
   children: ReactNode;
   picture: ReactNode;
+  pictureFooter?: ReactNode;
   dipFrom?: string;
   dipTo?: string;
   activeSlide: SlideId;
@@ -18,6 +19,7 @@ interface SlideProps {
 export default function Slide({
   children,
   picture,
+  pictureFooter,
   dipFrom,
   dipTo,
   activeSlide,
@@ -95,6 +97,9 @@ export default function Slide({
       >
         {picture}
       </div>
+
+      {/* Picture footer — outside the zoom transform */}
+      {pictureFooter && <div className="flex-shrink-0 px-4 md:px-8">{pictureFooter}</div>}
 
       {/* Entry overlay — starts opaque, fades to transparent */}
       {entryColor && (

@@ -119,110 +119,110 @@ export default function MountaintopInfo({
       transitionDirection={transitionDirection}
       dipToActive={dipToActive}
       picture={
-        <div>
-          <div className="relative w-full">
-            {/* Base image */}
-            <img
-              src={mainPicCutout}
-              alt="Bergstoppen"
-              className="block w-full"
-            />
+        <div className="relative w-full">
+          {/* Base image */}
+          <img
+            src={mainPicCutout}
+            alt="Bergstoppen"
+            className="block w-full"
+          />
 
-            {/* Cloud overlays (lowest z) */}
-            <img
-              src={clouds1}
-              alt=""
-              className="pointer-events-none absolute inset-0 h-full w-full"
-              style={{
-                opacity: showClouds2 ? 0 : 1,
-                transition: 'opacity 1000ms ease-in-out',
-              }}
-            />
-            <img
-              src={clouds2}
-              alt=""
-              className="pointer-events-none absolute inset-0 h-full w-full"
-              style={{
-                opacity: showClouds2 ? 1 : 0,
-                transition: 'opacity 1000ms ease-in-out',
-              }}
-            />
+          {/* Cloud overlays (lowest z) */}
+          <img
+            src={clouds1}
+            alt=""
+            className="pointer-events-none absolute inset-0 h-full w-full"
+            style={{
+              opacity: showClouds2 ? 0 : 1,
+              transition: 'opacity 1000ms ease-in-out',
+            }}
+          />
+          <img
+            src={clouds2}
+            alt=""
+            className="pointer-events-none absolute inset-0 h-full w-full"
+            style={{
+              opacity: showClouds2 ? 1 : 0,
+              transition: 'opacity 1000ms ease-in-out',
+            }}
+          />
 
-            {/* Smoke overlays (middle z) */}
-            <img
-              src={smoke1}
-              alt=""
-              className="pointer-events-none absolute inset-0 h-full w-full"
-              style={{
-                opacity: showSmoke2 ? 0 : 1,
-                transition: 'opacity 600ms ease-in-out',
-              }}
-            />
-            <img
-              src={smoke2}
-              alt=""
-              className="pointer-events-none absolute inset-0 h-full w-full"
-              style={{
-                opacity: showSmoke2 ? 1 : 0,
-                transition: 'opacity 600ms ease-in-out',
-              }}
-            />
+          {/* Smoke overlays (middle z) */}
+          <img
+            src={smoke1}
+            alt=""
+            className="pointer-events-none absolute inset-0 h-full w-full"
+            style={{
+              opacity: showSmoke2 ? 0 : 1,
+              transition: 'opacity 600ms ease-in-out',
+            }}
+          />
+          <img
+            src={smoke2}
+            alt=""
+            className="pointer-events-none absolute inset-0 h-full w-full"
+            style={{
+              opacity: showSmoke2 ? 1 : 0,
+              transition: 'opacity 600ms ease-in-out',
+            }}
+          />
 
-            {/* Detail overlays (highest z) */}
-            {detailOverlays.map((src, i) => (
-              <img
-                key={src}
-                src={src}
-                alt=""
-                className="pointer-events-none absolute inset-0 h-full w-full"
-                style={{
-                  opacity: activeDetailOverlay === i ? 1 : 0,
-                  transition: 'opacity 500ms ease-in-out',
-                }}
-              />
-            ))}
-
-            {/* Hover overlay */}
+          {/* Detail overlays (highest z) */}
+          {detailOverlays.map((src, i) => (
             <img
-              src={hoverOverlay}
+              key={src}
+              src={src}
               alt=""
               className="pointer-events-none absolute inset-0 h-full w-full"
               style={{
-                opacity: hovered || clicked ? 1 : 0,
-                transition: 'opacity 300ms ease',
+                opacity: activeDetailOverlay === i ? 1 : 0,
+                transition: 'opacity 500ms ease-in-out',
               }}
             />
-            {/* Mobile: full-image click target */}
-            <button
-              type="button"
-              className="absolute inset-0 cursor-pointer bg-transparent border-0 p-0 md:hidden"
-              onMouseEnter={() => setHovered(true)}
-              onMouseLeave={() => setHovered(false)}
-              onClick={() => {
-                setClicked(true);
-                onNavigate('program');
-              }}
-            />
-            {/* Desktop: precise click target top 45%–65%, left 47%–62% */}
-            <button
-              type="button"
-              className="absolute hidden cursor-pointer bg-transparent border-0 p-0 md:block"
-              style={{ top: '45%', left: '47%', width: '15%', height: '20%' }}
-              onMouseEnter={() => setHovered(true)}
-              onMouseLeave={() => setHovered(false)}
-              onClick={() => {
-                setClicked(true);
-                onNavigate('program');
-              }}
-            />
-          </div>
-          <p
-            className="m-0 pb-8 text-center text-sm font-body text-text transition-opacity duration-700"
-            style={{ opacity: tooltipVisible ? 1 : 0 }}
-          >
-            Klicka på gräsängarna för att fortsätta.
-          </p>
+          ))}
+
+          {/* Hover overlay */}
+          <img
+            src={hoverOverlay}
+            alt=""
+            className="pointer-events-none absolute inset-0 h-full w-full"
+            style={{
+              opacity: hovered || clicked ? 1 : 0,
+              transition: 'opacity 300ms ease',
+            }}
+          />
+          {/* Mobile: full-image click target */}
+          <button
+            type="button"
+            className="absolute inset-0 cursor-pointer bg-transparent border-0 p-0 md:hidden"
+            onMouseEnter={() => setHovered(true)}
+            onMouseLeave={() => setHovered(false)}
+            onClick={() => {
+              setClicked(true);
+              onNavigate('program');
+            }}
+          />
+          {/* Desktop: precise click target top 45%–65%, left 47%–62% */}
+          <button
+            type="button"
+            className="absolute hidden cursor-pointer bg-transparent border-0 p-0 md:block"
+            style={{ top: '45%', left: '47%', width: '15%', height: '20%' }}
+            onMouseEnter={() => setHovered(true)}
+            onMouseLeave={() => setHovered(false)}
+            onClick={() => {
+              setClicked(true);
+              onNavigate('program');
+            }}
+          />
         </div>
+      }
+      pictureFooter={
+        <p
+          className="m-0 pb-8 text-center text-sm font-body text-text transition-opacity duration-700"
+          style={{ opacity: tooltipVisible ? 1 : 0 }}
+        >
+          Klicka på gräsängarna för att fortsätta.
+        </p>
       }
     >
       <div className="relative overflow-hidden">
