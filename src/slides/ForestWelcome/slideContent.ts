@@ -1,4 +1,6 @@
-export const welcomeContent = `**Lägret för dig som vill upptäcka en annan värld.**  
+export const welcomeContent = `**Anmälan öppnar inom kort!**
+
+**Lägret för dig som vill upptäcka en annan värld.**  
 
 Det börjar som en vanlig resa.  
 Men när du passerar genom byn Vi på Alnö händer något…

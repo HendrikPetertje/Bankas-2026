@@ -77,7 +77,7 @@ export default function FrontDoor({ onNavigate }: FrontDoorProps) {
         {/* Heading */}
         <div className="z-20 mx-auto max-w-3xl px-6 pt-12 pb-8 text-center sm:pt-16 md:pt-20">
           <h1 className="font-display text-2xl text-text sm:text-3xl md:text-4xl">
-            Baptistkyrkan Sundsvall &amp; Bilda Presenterar
+            Bänkåsvikens gård och studieförbundet Bilda presenterar
           </h1>
         </div>
       </div>

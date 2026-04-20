@@ -6,5 +6,5 @@ Hör av dig om du vill vara med som ledare; eller kan hjälpa till praktiskt und
 
 ## Frågor och information:
 barnlager@baptistsundsvall.se  
-eller akuta frågor Elisabeth Ågren 070-651 82 14 eller Elsa Cronhjort 070-265 37 85
+eller akuta frågor Elisabeth Ågren 070-651 82 14
 `;

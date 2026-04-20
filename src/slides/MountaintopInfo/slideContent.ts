@@ -20,13 +20,12 @@ Start: Lägret startar kl 10:30 onsdagen den 25 juni med incheckning.
 
 **Avslutning**  
 Lägret avslutas den 27 juni kl 15:00.  
-Kl 13:00 blir det grillning där föräldrar och syskon kan köpa hamburgare.  
-Kl 14:00 bjuds alla gäster in till en avslutning med teaterföreställning och glimtar från livet i riket.  
+Kl 14:00 bjuds föräldrar och syskon in till lägeravslutning i aktivitetshuset med teaterföreställning och glimtar från livet i riket.  
 Därefter är det dags att packa ihop tälten och återvända hem från äventyret.
 
 **Kostnad**  
 1400 kr per deltagare
 (Syskon nr 2: 1000 kr)
 
-_Avgiften betalas efter bekräftelse till Bänkåsvikens Framtids bankgiro 261-5961.
+_Avgiften betalas i samband med anmälan, senast 1 juni, till Bänkåsvikens Framtids bankgiro 261-5961.
 Ange "Barnläger" och deltagarens namn vid betalning._`;
