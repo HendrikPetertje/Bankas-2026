@@ -139,11 +139,11 @@ export default function ForestWelcome({
               onNavigate('info');
             }}
           />
-          {/* Desktop: precise click target top 5%–30%, left 30%–55% */}
+          {/* Desktop: precise click target top 10%–35%, left 30%–55% */}
           <button
             type="button"
             className="absolute hidden cursor-pointer bg-transparent border-0 p-0 md:block"
-            style={{ top: '5%', left: '30%', width: '25%', height: '25%' }}
+            style={{ top: '10%', left: '30%', width: '25%', height: '25%' }}
             onMouseEnter={() => setHovered(true)}
             onMouseLeave={() => setHovered(false)}
             onClick={() => {
