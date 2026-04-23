@@ -205,13 +205,15 @@ export default function BackpackGame() {
               <img
                 src={cardBack}
                 alt="Kort"
-                className="block h-full w-full rounded-lg object-cover transition-opacity duration-300"
+                draggable={false}
+                className="pointer-events-none block h-full w-full rounded-lg object-cover transition-opacity duration-300"
                 style={{ opacity: isFlipped ? 0 : 1 }}
               />
               <img
-                src={card.image}
+                src={isFlipped ? card.image : cardBack}
                 alt="Kort"
-                className="absolute inset-0 h-full w-full rounded-lg object-cover transition-opacity duration-300"
+                draggable={false}
+                className="pointer-events-none absolute inset-0 h-full w-full rounded-lg object-cover transition-opacity duration-300"
                 style={{ opacity: isFlipped ? 1 : 0 }}
               />
               {isMatched && (
