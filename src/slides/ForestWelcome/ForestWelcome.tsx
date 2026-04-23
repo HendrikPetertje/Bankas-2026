@@ -164,7 +164,7 @@ export default function ForestWelcome({
           className="m-0 pb-8 text-center text-sm font-body text-text transition-opacity duration-700"
           style={{ opacity: tooltipVisible ? 1 : 0 }}
         >
-          Klicka på berget för att fortsätta
+          Klicka på berget för att fortsätta eller spela spel!
         </p>
       }
     >

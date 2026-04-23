@@ -1,6 +1,4 @@
-export const welcomeContent = `**Anmälan öppnar inom kort!**
-
-**Lägret för dig som vill upptäcka en annan värld.**  
+export const welcomeContent = `**Lägret för dig som vill upptäcka en annan värld.**  
 
 Det börjar som en vanlig resa.  
 Men när du passerar genom byn Vi på Alnö händer något…
@@ -17,4 +15,7 @@ Under "Konungens Rike" fylls dagarna med spårningar, lekar, tävlingar, pyssel,
 Minesverset som vi kommer att utforska tillsammans under lägret är:  
 > Men ni är ett utvalt släkte, kungar och präster, ett heligt folk, Guds eget folk som ska förkunna Hans storverk. Han har kallat er från mörkret till sitt underbara ljus.
 
-_1 Petrusbrevet 2:9_`;
+_1 Petrusbrevet 2:9_
+
+**Anmälan öppnar Söndag 3 maj 20:00**
+`;

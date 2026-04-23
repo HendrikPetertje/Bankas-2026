@@ -73,7 +73,7 @@ export default function MobileMapOverlay({ activeSlide, onNavigate, transitionin
 
       {/* Content — fades in after bubble expands */}
       <div
-        className="relative z-10 flex flex-col items-center justify-center w-full transition-opacity duration-300 ease-out"
+        className="relative z-10 flex flex-col items-center justify-center w-full pt-16 transition-opacity duration-300 ease-out"
         style={{ opacity: expanded ? 1 : 0, transitionDelay: expanded ? '200ms' : '0ms' }}
       >
         {/* Slide buttons: 2-column grid, last one centered */}
