@@ -130,12 +130,12 @@ export default function Slide({
           <button
             type="button"
             onClick={onGameOpen}
-            className="absolute top-2 right-6 z-30 cursor-pointer border-0 bg-transparent p-0 transition-transform duration-200 hover:scale-110 md:right-10 xl:right-[15%]"
+            className="absolute p-2 top-0 right-6 z-30 cursor-pointer border-0 bg-transparent p-0 transition-transform duration-200 hover:scale-110 md:right-10 xl:right-[15%]"
           >
             <img
               src={activatorIcon}
               alt="Spela spel"
-              className="h-12 w-12 md:h-16 md:w-16 drop-shadow-lg"
+              className="w-12 md:h-16 md:w-16 drop-shadow-lg"
             />
           </button>
         )}
