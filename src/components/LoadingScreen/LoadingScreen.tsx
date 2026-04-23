@@ -4,9 +4,10 @@ import loadingImage from './images/loading-screen-image.jpg';
 interface LoadingScreenProps {
   assets: string[];
   onDone: () => void;
+  image?: string;
 }
 
-export default function LoadingScreen({ assets, onDone }: LoadingScreenProps) {
+export default function LoadingScreen({ assets, onDone, image }: LoadingScreenProps) {
   const [loadedCount, setLoadedCount] = useState(0);
   const [done, setDone] = useState(false);
   const [visible, setVisible] = useState(true);
@@ -69,9 +70,9 @@ export default function LoadingScreen({ assets, onDone }: LoadingScreenProps) {
       }}
     >
       <img
-        src={loadingImage}
-        alt="Konungens Rike"
-        className="max-w-[320px] md:max-w-[400px] w-full object-contain"
+        src={image ?? loadingImage}
+        alt="Laddar..."
+        className={image ? 'max-w-full object-contain' : 'max-w-[320px] md:max-w-[400px] w-full object-contain'}
       />
       <div className="w-64 h-2 bg-surface rounded-full overflow-hidden">
         <div

@@ -1,6 +1,8 @@
 import type { ReactNode } from 'react';
 import { useEffect, useState } from 'react';
 import type { SlideId } from '../App';
+import activatorIcon from './images/activator.png';
+import closeImg from './SlideNav/images/close-button.png';
 import SlideNav from './SlideNav/SlideNav';
 
 interface SlideProps {
@@ -14,6 +16,10 @@ interface SlideProps {
   transitioning: boolean;
   transitionDirection: 'forward' | 'backward' | null;
   dipToActive: boolean;
+  gameContent?: ReactNode;
+  isGameOpen?: boolean;
+  onGameOpen?: () => void;
+  onGameClose?: () => void;
 }
 
 export default function Slide({
@@ -27,6 +33,10 @@ export default function Slide({
   transitioning,
   transitionDirection,
   dipToActive,
+  gameContent,
+  isGameOpen,
+  onGameOpen,
+  onGameClose,
 }: SlideProps) {
   // Direction-aware overlay colors:
   // Forward/initial: exit = dipTo, entry = dipFrom
@@ -37,6 +47,25 @@ export default function Slide({
 
   // Entry overlay: starts opaque, fades to transparent over 2s on mount
   const [entryVisible, setEntryVisible] = useState(!!entryColor);
+
+  // Lock body scroll when game modal is open (iOS needs position:fixed)
+  useEffect(() => {
+    if (!isGameOpen) return;
+    const scrollY = window.scrollY;
+    document.body.style.position = 'fixed';
+    document.body.style.top = `-${scrollY}px`;
+    document.body.style.left = '0';
+    document.body.style.right = '0';
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.left = '';
+      document.body.style.right = '';
+      document.body.style.overflow = '';
+      window.scrollTo(0, scrollY);
+    };
+  }, [isGameOpen]);
 
   useEffect(() => {
     if (!entryColor) return;
@@ -88,7 +117,7 @@ export default function Slide({
 
       {/* Picture slot with zoom transition — intrinsic size only */}
       <div
-        className="flex-shrink-0 px-4 md:px-8"
+        className="relative flex-shrink-0 px-4 md:px-8"
         style={{
           transform: getPictureScale(),
           transition: dipToActive ? 'transform 2s ease-in-out' : 'none',
@@ -96,6 +125,20 @@ export default function Slide({
         }}
       >
         {picture}
+        {/* Joystick overlay — top-right of picture, only when game is available */}
+        {gameContent && onGameOpen && (
+          <button
+            type="button"
+            onClick={onGameOpen}
+            className="absolute top-2 right-6 z-30 cursor-pointer border-0 bg-transparent p-0 transition-transform duration-200 hover:scale-110 md:right-10 xl:right-[15%]"
+          >
+            <img
+              src={activatorIcon}
+              alt="Spela spel"
+              className="h-12 w-12 md:h-16 md:w-16 drop-shadow-lg"
+            />
+          </button>
+        )}
       </div>
 
       {/* Picture footer — outside the zoom transform */}
@@ -125,6 +168,28 @@ export default function Slide({
             bottom: '-300px',
           }}
         />
+      )}
+
+      {/* Game modal — full-screen mobile, max-width desktop, backdrop does NOT dismiss */}
+      {gameContent && isGameOpen && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/50">
+          {/* Modal container */}
+          <div className="relative z-10 flex h-full w-full flex-col overflow-hidden backdrop-blur-2xl bg-base/70 backdrop-saturate-150 md:my-8 md:h-auto md:max-h-[calc(100vh-4rem)] md:max-w-2xl md:rounded-2xl md:shadow-xl md:overflow-y-auto">
+            {/* Close button */}
+            <button
+              type="button"
+              onClick={onGameClose}
+              className="absolute top-4 right-4 z-20 cursor-pointer transition-all duration-200 hover:brightness-90"
+            >
+              <img
+                src={closeImg}
+                alt="Stäng"
+                className="h-10 w-10"
+              />
+            </button>
+            <div className="flex min-h-0 flex-1 flex-col pt-8 md:min-h-[60vh]">{gameContent}</div>
+          </div>
+        </div>
       )}
     </div>
   );

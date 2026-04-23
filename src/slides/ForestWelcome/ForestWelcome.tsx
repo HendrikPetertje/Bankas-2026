@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import type { SlideId } from '../../App';
 import MarkdownContent from '../../components/MarkdownContent/MarkdownContent';
 import Slide from '../../components/Slide';
+import BackpackGame from './BackpackGame/BackpackGame';
 import background from './images/background.jpg';
 import content1 from './images/content-1.jpg';
 import content2 from './images/content-2.jpg';
@@ -50,6 +51,7 @@ export default function ForestWelcome({
   const [hovered, setHovered] = useState(false);
   const [clicked, setClicked] = useState(false);
   const [tooltipVisible, setTooltipVisible] = useState(false);
+  const [gameOpen, setGameOpen] = useState(false);
 
   // Tooltip: fades in after 3s
   useEffect(() => {
@@ -99,6 +101,10 @@ export default function ForestWelcome({
       transitioning={transitioning}
       transitionDirection={transitionDirection}
       dipToActive={dipToActive}
+      gameContent={<BackpackGame />}
+      isGameOpen={gameOpen}
+      onGameOpen={() => setGameOpen(true)}
+      onGameClose={() => setGameOpen(false)}
       picture={
         <div className="relative w-full">
           <img
