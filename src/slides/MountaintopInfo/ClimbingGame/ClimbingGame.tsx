@@ -1,28 +1,37 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
+import LoadingScreen from '../../../components/LoadingScreen/LoadingScreen';
 import type { CharacterKind } from './assets/Character';
 import { defaultLevel } from './assets/defaultLevel';
+import assetspriteUrl from './assets/images/assetsprite.png';
+import platformspriteUrl from './assets/images/platformsprite.png';
 import GameCanvas from './components/GameCanvas';
 import IntroScreen from './components/IntroScreen';
 import SelectionScreen from './components/SelectionScreen';
 import VictoryScreen from './components/VictoryScreen';
 import { loadImages } from './engine/renderer';
 
+const GAME_ASSETS = [assetspriteUrl, platformspriteUrl];
+
 type GameScreen = 'intro' | 'selection' | 'fade' | 'playing' | 'victory';
 
 export default function ClimbingGame() {
+  const [loaded, setLoaded] = useState(false);
   const [screen, setScreen] = useState<GameScreen>('intro');
   const [selectedKind, setSelectedKind] = useState<CharacterKind>('female');
   const [elapsedMs, setElapsedMs] = useState(0);
   const gameKeyRef = useRef(0);
   const [images, setImages] = useState<{ asset: HTMLImageElement; platform: HTMLImageElement } | null>(null);
 
-  // Preload images on mount
-  useEffect(() => {
+  const assets = useMemo(() => GAME_ASSETS, []);
+
+  const handleLoaded = useCallback(() => {
+    // Images are already in browser cache from LoadingScreen — loadImages() will be instant
     loadImages()
-      .then(setImages)
-      .catch(() => {
-        // Image loading failed silently
-      });
+      .then((imgs) => {
+        setImages(imgs);
+        setLoaded(true);
+      })
+      .catch(() => setLoaded(true));
   }, []);
 
   const handleContinueToSelection = useCallback(() => {
@@ -32,7 +41,7 @@ export default function ClimbingGame() {
   const handleSelect = useCallback((kind: CharacterKind) => {
     setSelectedKind(kind);
     setScreen('fade');
-    gameKeyRef.current += 1; // force GameCanvas remount on new game
+    gameKeyRef.current += 1;
 
     setTimeout(() => {
       setScreen('playing');
@@ -47,6 +56,16 @@ export default function ClimbingGame() {
   const handlePlayAgain = useCallback(() => {
     setScreen('intro');
   }, []);
+
+  if (!loaded) {
+    return (
+      <LoadingScreen
+        assets={assets}
+        onDone={handleLoaded}
+        isGame
+      />
+    );
+  }
 
   return (
     <div className="flex min-h-0 flex-1 flex-col">

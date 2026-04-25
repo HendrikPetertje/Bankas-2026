@@ -1,6 +1,5 @@
 import { useCallback, useMemo, useState } from 'react';
 import BlueButton from '../../../components/BlueButton/BlueButton';
-import activatorIcon from '../../../components/images/activator.png';
 import LoadingScreen from '../../../components/LoadingScreen/LoadingScreen';
 import card11 from './images/1-1.jpg';
 import card12 from './images/1-2.jpg';
@@ -127,7 +126,7 @@ export default function BackpackGame() {
       <LoadingScreen
         assets={assets}
         onDone={() => setLoaded(true)}
-        image={activatorIcon}
+        isGame
       />
     );
   }

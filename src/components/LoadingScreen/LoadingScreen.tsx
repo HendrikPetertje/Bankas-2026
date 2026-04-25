@@ -1,13 +1,15 @@
 import { useEffect, useRef, useState } from 'react';
+import activatorIcon from '../images/activator.png';
 import loadingImage from './images/loading-screen-image.jpg';
 
 interface LoadingScreenProps {
   assets: string[];
   onDone: () => void;
   image?: string;
+  isGame?: boolean;
 }
 
-export default function LoadingScreen({ assets, onDone, image }: LoadingScreenProps) {
+export default function LoadingScreen({ assets, onDone, image, isGame }: LoadingScreenProps) {
   const [loadedCount, setLoadedCount] = useState(0);
   const [done, setDone] = useState(false);
   const [visible, setVisible] = useState(true);
@@ -61,6 +63,9 @@ export default function LoadingScreen({ assets, onDone, image }: LoadingScreenPr
 
   const progress = assets.length === 0 ? 1 : Math.min(loadedCount / assets.length, 1);
 
+  const displayImage = image ?? (isGame ? activatorIcon : loadingImage);
+  const isCustomImage = image !== undefined || isGame === true;
+
   return (
     <div
       className="fixed inset-0 z-[100] bg-edge-light flex flex-col items-center justify-center gap-6"
@@ -70,9 +75,9 @@ export default function LoadingScreen({ assets, onDone, image }: LoadingScreenPr
       }}
     >
       <img
-        src={image ?? loadingImage}
+        src={displayImage}
         alt="Laddar..."
-        className={image ? 'max-w-full object-contain' : 'max-w-[320px] md:max-w-[400px] w-full object-contain'}
+        className={isCustomImage ? 'max-w-full object-contain' : 'max-w-[320px] md:max-w-[400px] w-full object-contain'}
       />
       <div className="w-64 h-2 bg-surface rounded-full overflow-hidden">
         <div
