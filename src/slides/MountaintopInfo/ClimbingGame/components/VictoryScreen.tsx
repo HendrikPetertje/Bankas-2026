@@ -1,4 +1,4 @@
-import BlueButton from '../../../components/BlueButton/BlueButton';
+import BlueButton from '../../../../components/BlueButton/BlueButton';
 import { assetSprites, SPRITE_SCALE } from '../assets/sprites';
 
 interface VictoryScreenProps {

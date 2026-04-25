@@ -1,4 +1,4 @@
-import BlueButton from '../../../components/BlueButton/BlueButton';
+import BlueButton from '../../../../components/BlueButton/BlueButton';
 
 interface IntroScreenProps {
   onContinue: () => void;
