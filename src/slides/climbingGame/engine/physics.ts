@@ -5,6 +5,7 @@ const GRAVITY = 900;
 export const MOVE_SPEED = 200;
 const JUMP_VELOCITY = 550;
 const CLIMB_SPEED = 150;
+const TERMINAL_VELOCITY = 800;
 
 /** Ice zone friction — player slides extra after stopping */
 const ICE_FRICTION = 0.95; // velocity multiplier per frame when not pressing input
@@ -36,6 +37,7 @@ export function applyPhysics(player: PlayerState, dt: number, isIceZone: boolean
   // Apply gravity when airborne
   if (!player.isOnGround) {
     player.vy += GRAVITY * dtSec;
+    if (player.vy > TERMINAL_VELOCITY) player.vy = TERMINAL_VELOCITY;
   }
 
   player.x += player.vx * dtSec;

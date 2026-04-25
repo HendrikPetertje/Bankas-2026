@@ -152,7 +152,7 @@ export default function GameCanvas({ kind, level, onVictory }: GameCanvasProps) 
         if (!p.isOnRope) {
           checkPlatformCollisions(p, level, screenWidth);
         }
-        clampToScreen(p, screenWidth);
+        clampToScreen(p, screenWidth, level);
 
         // If on rope, check if climbed past top or bottom
         if (p.isOnRope) {
@@ -200,11 +200,11 @@ export default function GameCanvas({ kind, level, onVictory }: GameCanvasProps) 
         const ropes = resolveAllRopes(level);
         renderRopes(ctx, asset, ropes, camera);
 
-        // Clouds (level 2)
-        renderClouds(ctx, asset, cloudsRef.current, camera, level.level2BasePlatform.y);
-
         // Player
         renderPlayer(ctx, asset, playerRef.current, camera);
+
+        // Clouds (level 2) — rendered in front of player/platforms but behind controls
+        renderClouds(ctx, asset, cloudsRef.current, camera, level.level2BasePlatform.y);
         ctx.restore();
       }
 

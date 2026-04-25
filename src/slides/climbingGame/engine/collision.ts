@@ -137,7 +137,9 @@ export function checkPlatformCollisions(player: PlayerState, config: LevelConfig
     if (feetCenter < platLeft || feetCenter > platRight) continue;
 
     // Check if player is falling onto platform surface
-    if (player.vy > 30 && feetY >= platTop - 5 && feetY <= platTop + 20) {
+    // Use wider catch window for high-velocity falls to prevent tunneling
+    const catchWindow = Math.max(20, player.vy * 0.02);
+    if (player.vy > 30 && feetY >= platTop - 5 && feetY <= platTop + catchWindow) {
       player.y = platTop;
       player.vy = 0;
       player.isOnGround = true;
@@ -146,7 +148,7 @@ export function checkPlatformCollisions(player: PlayerState, config: LevelConfig
     }
 
     // Standing check (already on platform, not moving vertically)
-    if (Math.abs(feetY - platTop) < 3 && Math.abs(player.vy) < 5) {
+    if (feetY >= platTop - 3 && feetY <= platTop + 3 && Math.abs(player.vy) < 5) {
       player.y = platTop;
       player.isOnGround = true;
       player.jumpDir = 0;
@@ -180,19 +182,21 @@ export function checkRopeOverlap(player: PlayerState, config: LevelConfig): Reso
   return null;
 }
 
-/** Clamp player to screen boundaries */
-export function clampToScreen(player: PlayerState, screenWidth: number): void {
+/** Clamp player to screen boundaries and base platform floor */
+export function clampToScreen(player: PlayerState, screenWidth: number, config: LevelConfig): void {
   if (player.x < 0) player.x = 0;
 
   const maxX = screenWidth - FEET_R;
   if (player.x > maxX) player.x = maxX;
 
-  // Don't go below bottom of world
-  const maxY = WORLD_HEIGHT;
-  if (player.y > maxY) {
-    player.y = maxY;
+  // Don't fall below the base platform ground line
+  const fl = platformSprites.forestLong[0];
+  const baseGroundY = platformGroundLineY(config.basePlatform.y, fl);
+  if (player.y > baseGroundY) {
+    player.y = baseGroundY;
     player.vy = 0;
     player.isOnGround = true;
+    player.jumpDir = 0;
   }
 
   // Don't go above top
