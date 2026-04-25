@@ -57,7 +57,7 @@ export function updateCharacterState(player: PlayerState): void {
     player.state = 'walkingRight';
     player.facingLeft = false;
   } else {
-    player.state = 'standing';
+    player.state = player.facingLeft ? 'standingLeft' : 'standing';
   }
 }
 

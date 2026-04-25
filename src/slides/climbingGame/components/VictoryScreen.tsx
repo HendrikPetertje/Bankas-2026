@@ -1,3 +1,4 @@
+import BlueButton from '../../../components/BlueButton/BlueButton';
 import { assetSprites, SPRITE_SCALE } from '../assets/sprites';
 
 interface VictoryScreenProps {
@@ -25,7 +26,7 @@ export default function VictoryScreen({ elapsedMs, assetImg, onPlayAgain }: Vict
       <div className="max-w-md space-y-4">
         <h2 className="font-display text-2xl text-pine">Du klarade det!</h2>
 
-        <p className="font-body text-base leading-relaxed">
+        <p className="font-body text-[length:1rem] leading-relaxed">
           Från toppen är utsikten helt fantastisk och långt i fjärran kan man se slätter med små tält och bakom dem en
           mäktig hamnstad!
         </p>
@@ -94,13 +95,7 @@ export default function VictoryScreen({ elapsedMs, assetImg, onPlayAgain }: Vict
           </strong>
         </p>
 
-        <button
-          type="button"
-          className="mt-4 rounded-lg bg-pine px-6 py-3 font-body text-base text-white transition-colors hover:bg-foam"
-          onClick={onPlayAgain}
-        >
-          Spela igen
-        </button>
+        <BlueButton onClick={onPlayAgain}>Spela igen</BlueButton>
       </div>
     </div>
   );

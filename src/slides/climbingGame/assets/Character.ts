@@ -9,6 +9,7 @@ export type CharacterState =
   | 'jumpingLeft'
   | 'jumpingRight'
   | 'standing'
+  | 'standingLeft'
   | 'climbing-idle'
   | 'climbing';
 
@@ -22,6 +23,8 @@ export function getCharacterFrames(
   switch (state) {
     case 'standing':
       return { frames: data.standing, mirror: false };
+    case 'standingLeft':
+      return { frames: data.standing, mirror: true };
     case 'walkingRight':
       return { frames: data.walking, mirror: false };
     case 'walkingLeft':

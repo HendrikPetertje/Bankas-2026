@@ -27,7 +27,14 @@ export const defaultLevel: LevelConfig = {
   ],
 
   level2BasePlatform: { x: 0, y: 2000 },
-  level2: [{ x: 80, y: 2400, variant: 0, rope: { x: 160, y: 0, length: 400 } }],
+  level2: [
+    { x: 10, y: 2000, variant: 0, rope: { x: 80, y: 0, length: 1950 } },
+    { x: 80, y: 2300, variant: 1, rope: { x: 160, y: 0, length: 250 } },
+    { x: 600, y: 2450, variant: 2 },
+    { x: 1000, y: 2600, variant: 1 },
+    { x: 1350, y: 2700, variant: 0 },
+    { x: 850, y: 2850, variant: 0 },
+  ],
 
   level3BasePlatform: { x: 0, y: 4000 },
   level3: [{ x: 80, y: 4400, variant: 0, rope: { x: 160, y: 0, length: 400 } }],
