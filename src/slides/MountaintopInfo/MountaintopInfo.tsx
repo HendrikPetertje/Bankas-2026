@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import type { SlideId } from '../../App';
 import MarkdownContent from '../../components/MarkdownContent/MarkdownContent';
 import Slide from '../../components/Slide';
+import ClimbingGame from '../climbingGame/ClimbingGame';
 import dragon from './images/dragon.png';
 import flockOfBirds from './images/flock-of-birds.png';
 import fluffyClouds from './images/fluffy-clouds.png';
@@ -53,6 +54,7 @@ export default function MountaintopInfo({
   const [hovered, setHovered] = useState(false);
   const [clicked, setClicked] = useState(false);
   const [tooltipVisible, setTooltipVisible] = useState(false);
+  const [gameOpen, setGameOpen] = useState(false);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -118,6 +120,10 @@ export default function MountaintopInfo({
       transitioning={transitioning}
       transitionDirection={transitionDirection}
       dipToActive={dipToActive}
+      gameContent={<ClimbingGame />}
+      isGameOpen={gameOpen}
+      onGameOpen={() => setGameOpen(true)}
+      onGameClose={() => setGameOpen(false)}
       picture={
         <div className="relative w-full">
           {/* Base image */}

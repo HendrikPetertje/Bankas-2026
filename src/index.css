@@ -33,6 +33,8 @@ body {
   background-color: var(--color-edge-light);
   color: var(--color-text);
   font-family: var(--font-body);
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 em,

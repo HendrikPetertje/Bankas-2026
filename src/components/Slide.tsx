@@ -174,7 +174,7 @@ export default function Slide({
       {gameContent && isGameOpen && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/50">
           {/* Modal container */}
-          <div className="relative z-10 flex h-full w-full flex-col overflow-hidden backdrop-blur-2xl bg-base/70 backdrop-saturate-150 md:my-8 md:h-auto md:max-h-[calc(100vh-4rem)] md:max-w-2xl md:rounded-2xl md:shadow-xl md:overflow-y-auto">
+          <div className="relative z-10 flex h-full w-full flex-col overflow-hidden backdrop-blur-2xl bg-base/70 backdrop-saturate-150 md:my-8 md:h-[calc(100vh-4rem)] md:max-w-2xl md:rounded-2xl md:shadow-xl md:overflow-y-auto">
             {/* Close button */}
             <button
               type="button"
@@ -187,7 +187,7 @@ export default function Slide({
                 className="h-10 w-10"
               />
             </button>
-            <div className="flex min-h-0 flex-1 flex-col pt-8 md:min-h-[60vh]">{gameContent}</div>
+            <div className="flex min-h-0 flex-1 flex-col pt-8">{gameContent}</div>
           </div>
         </div>
       )}
