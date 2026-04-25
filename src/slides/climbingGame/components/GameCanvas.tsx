@@ -39,6 +39,9 @@ interface GameCanvasProps {
   onVictory: (elapsedMs: number) => void;
 }
 
+/** Reference screen width — at this width SPRITE_SCALE is 1:1 */
+const REF_WIDTH = 675;
+
 export default function GameCanvas({ kind, level, onVictory }: GameCanvasProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const playerRef = useRef<PlayerState | null>(null);
@@ -84,8 +87,10 @@ export default function GameCanvas({ kind, level, onVictory }: GameCanvasProps) 
       function update(dt: number) {
         if (!playerRef.current || !canvas) return;
         const dpr = window.devicePixelRatio || 1;
-        const screenWidth = canvas.width / dpr;
-        const screenHeight = canvas.height / dpr;
+        const cssWidth = canvas.width / dpr;
+        const gameScale = cssWidth / REF_WIDTH;
+        const screenWidth = REF_WIDTH;
+        const screenHeight = canvas.height / dpr / gameScale;
         const p = playerRef.current;
 
         // Process input
@@ -186,11 +191,13 @@ export default function GameCanvas({ kind, level, onVictory }: GameCanvasProps) 
         const { asset, platform } = imagesRef.current;
         const camera = cameraRef.current;
         const dpr = window.devicePixelRatio || 1;
-        const screenWidth = canvas.width / dpr;
-        const screenHeight = canvas.height / dpr;
+        const cssWidth = canvas.width / dpr;
+        const gameScale = cssWidth / REF_WIDTH;
+        const screenWidth = REF_WIDTH;
+        const screenHeight = canvas.height / dpr / gameScale;
 
         ctx.save();
-        ctx.scale(dpr, dpr);
+        ctx.scale(dpr * gameScale, dpr * gameScale);
         ctx.clearRect(0, 0, screenWidth, screenHeight);
 
         // Platforms
@@ -236,12 +243,12 @@ export default function GameCanvas({ kind, level, onVictory }: GameCanvasProps) 
       const parent = canvas.parentElement;
       if (!parent) return;
       const dpr = window.devicePixelRatio || 1;
-      const w = parent.clientWidth;
-      const h = parent.clientHeight;
-      canvas.width = w * dpr;
-      canvas.height = h * dpr;
-      canvas.style.width = `${w}px`;
-      canvas.style.height = `${h}px`;
+      const cssW = parent.clientWidth;
+      const cssH = parent.clientHeight;
+      canvas.width = cssW * dpr;
+      canvas.height = cssH * dpr;
+      canvas.style.width = `${cssW}px`;
+      canvas.style.height = `${cssH}px`;
     }
 
     resize();
