@@ -72,7 +72,7 @@ export const assetSprites = {
       { startX: 1379, startY: 253, width: 197, height: 231 },
     ],
   },
-  finishPlatform: { startX: 201, startY: 532, width: 214, height: 328, groundLineY: 150 } as PlatformSprite,
+  finishPlatform: { startX: 201, startY: 532, width: 415, height: 328, groundLineY: 150 } as PlatformSprite,
   joyStick: {
     directionalStick: { startX: 0, startY: 532, width: 101, height: 100 },
     directionalBackground: { startX: 201, startY: 860, width: 193, height: 195 },
@@ -114,7 +114,7 @@ export const platformSprites = {
     { startX: 1685, startY: 0, width: 389, height: 210, groundLineY: 42 },
   ],
   longSnow: [
-    { startX: 1357, startY: 210, width: 2802, height: 239, groundLineY: 63 },
+    { startX: 1357, startY: 210, width: 1445, height: 239, groundLineY: 63 },
   ],
 } as const;
 

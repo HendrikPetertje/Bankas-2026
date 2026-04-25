@@ -18,8 +18,29 @@ export default function VictoryScreen({ elapsedMs, assetImg, onPlayAgain }: Vict
 
   const platW = fp.width * SPRITE_SCALE;
   const platH = fp.height * SPRITE_SCALE;
+  const femW = female.width * SPRITE_SCALE;
   const femH = female.height * SPRITE_SCALE;
+  const maleW = male.width * SPRITE_SCALE;
   const maleH = male.height * SPRITE_SCALE;
+
+  // Ground line: distance from top of platform sprite to where characters stand
+  const groundFromPlatTop = fp.groundLineY * SPRITE_SCALE;
+
+  // Canvas height: tallest character above ground + platform below ground
+  const maxCharH = Math.max(femH, maleH);
+  const canvasH = maxCharH + (platH - groundFromPlatTop);
+
+  // Platform top Y in canvas coords
+  const platTopY = maxCharH - groundFromPlatTop;
+
+  // Characters feet at ground line
+  const groundY = platTopY + groundFromPlatTop;
+  const femY = groundY - femH;
+  const maleY = groundY - maleH;
+
+  // Horizontal: female left of center, male right (mirrored)
+  const femX = platW / 2 - femW - 5;
+  const maleX = platW / 2 + 5;
 
   return (
     <div className="relative flex flex-1 flex-col items-center justify-center px-6 py-16 text-center text-text">
@@ -27,14 +48,14 @@ export default function VictoryScreen({ elapsedMs, assetImg, onPlayAgain }: Vict
         <h2 className="font-display text-2xl text-pine">Du klarade det!</h2>
 
         <p className="font-body text-[length:1rem] leading-relaxed">
-          Från toppen är utsikten helt fantastisk och långt i fjärran kan man se slätter med små tält och bakom dem en
+          Från toppen är utsikten helt fantastisk och långt i fjärran kan man se fält med små tält och bakom dem en
           mäktig hamnstad!
         </p>
 
         {/* Characters on finish platform */}
         <div
           className="relative mx-auto"
-          style={{ width: platW, height: platH + Math.max(femH, maleH) }}
+          style={{ width: platW, height: canvasH }}
         >
           <canvas
             ref={(canvas) => {
@@ -43,48 +64,33 @@ export default function VictoryScreen({ elapsedMs, assetImg, onPlayAgain }: Vict
               if (!ctx) return;
               const dpr = window.devicePixelRatio || 1;
               canvas.width = platW * dpr;
-              canvas.height = (platH + Math.max(femH, maleH)) * dpr;
+              canvas.height = canvasH * dpr;
               ctx.scale(dpr, dpr);
 
-              // Draw characters
-              const charY = Math.max(femH, maleH) - fp.groundLineY * SPRITE_SCALE;
+              // Draw platform
+              ctx.drawImage(assetImg, fp.startX, fp.startY, fp.width, fp.height, 0, platTopY, platW, platH);
+
+              // Draw female
               ctx.drawImage(
                 assetImg,
                 female.startX,
                 female.startY,
                 female.width,
                 female.height,
-                platW / 2 - female.width * SPRITE_SCALE - 5,
-                charY - femH,
-                female.width * SPRITE_SCALE,
+                femX,
+                femY,
+                femW,
                 femH,
               );
-              ctx.drawImage(
-                assetImg,
-                male.startX,
-                male.startY,
-                male.width,
-                male.height,
-                platW / 2 + 5,
-                charY - maleH,
-                male.width * SPRITE_SCALE,
-                maleH,
-              );
 
-              // Draw platform
-              ctx.drawImage(
-                assetImg,
-                fp.startX,
-                fp.startY,
-                fp.width,
-                fp.height,
-                0,
-                Math.max(femH, maleH),
-                platW,
-                platH,
-              );
+              // Draw male (mirrored to face the girl)
+              ctx.save();
+              ctx.translate(maleX + maleW, maleY);
+              ctx.scale(-1, 1);
+              ctx.drawImage(assetImg, male.startX, male.startY, male.width, male.height, 0, 0, maleW, maleH);
+              ctx.restore();
             }}
-            style={{ width: platW, height: platH + Math.max(femH, maleH) }}
+            style={{ width: platW, height: canvasH }}
           />
         </div>
 

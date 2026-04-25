@@ -1,7 +1,7 @@
 import type { LevelConfig, PlatformPlacement } from '../assets/LevelConfig';
 import { WORLD_HEIGHT } from '../assets/LevelConfig';
 import type { PlatformSprite } from '../assets/sprites';
-import { FEET_LEFT, FEET_RIGHT, platformSprites, SPRITE_SCALE } from '../assets/sprites';
+import { assetSprites, FEET_LEFT, FEET_RIGHT, platformSprites, SPRITE_SCALE } from '../assets/sprites';
 import type { PlayerState } from './playerState';
 
 /** Scaled feet hitbox edges */
@@ -85,6 +85,16 @@ function resolvePlatforms(config: LevelConfig, screenWidth: number): ResolvedPla
     const s = platformSprites.snow[p.variant];
     platforms.push({ x: p.x, y: p.y, width: s.width, height: s.height, groundLineY: s.groundLineY });
   }
+
+  // Final platform (from asset sprite sheet)
+  const fp = assetSprites.finishPlatform;
+  platforms.push({
+    x: config.finalPlatform.x,
+    y: config.finalPlatform.y,
+    width: fp.width,
+    height: fp.height,
+    groundLineY: fp.groundLineY,
+  });
 
   return platforms;
 }

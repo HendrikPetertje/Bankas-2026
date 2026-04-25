@@ -14,6 +14,10 @@ export interface PlayerState {
   facingLeft: boolean;
   /** Direction locked at jump: -1 left, 1 right, 0 neutral */
   jumpDir: number;
+  /** Remaining pixels of ice slide after releasing input */
+  iceSlideDistance: number;
+  /** True when slipping on ice rope (involuntary downward drift) */
+  isIceSlipping: boolean;
   /** Animation frame index */
   animFrame: number;
   /** Time accumulator for animation cycling (ms) */
@@ -33,6 +37,8 @@ export function createPlayerState(kind: CharacterKind, x: number, y: number): Pl
     justLeftRope: false,
     facingLeft: false,
     jumpDir: 0,
+    iceSlideDistance: 0,
+    isIceSlipping: false,
     animFrame: 0,
     animTimer: 0,
   };
@@ -41,7 +47,7 @@ export function createPlayerState(kind: CharacterKind, x: number, y: number): Pl
 /** Update character state based on physics state */
 export function updateCharacterState(player: PlayerState): void {
   if (player.isOnRope) {
-    player.state = player.vy !== 0 ? 'climbing' : 'climbing-idle';
+    player.state = player.vy !== 0 && !player.isIceSlipping ? 'climbing' : 'climbing-idle';
     return;
   }
 

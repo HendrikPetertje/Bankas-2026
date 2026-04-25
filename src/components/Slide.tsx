@@ -135,7 +135,7 @@ export default function Slide({
             <img
               src={activatorIcon}
               alt="Spela spel"
-              className="w-12 md:h-16 md:w-16 drop-shadow-lg"
+              className="w-12 md:h-16 drop-shadow-lg"
             />
           </button>
         )}

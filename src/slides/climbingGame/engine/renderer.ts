@@ -1,4 +1,6 @@
 import { getCharacterFrames } from '../assets/Character';
+import assetspriteUrl from '../assets/images/assetsprite.png';
+import platformspriteUrl from '../assets/images/platformsprite.png';
 import type { LevelConfig, PlatformPlacement } from '../assets/LevelConfig';
 import { WORLD_HEIGHT } from '../assets/LevelConfig';
 import { assetSprites, platformSprites, SPRITE_SCALE } from '../assets/sprites';
@@ -23,8 +25,8 @@ export function loadImages(): Promise<{ asset: HTMLImageElement; platform: HTMLI
     asset.onerror = reject;
     platform.onerror = reject;
 
-    asset.src = `${import.meta.env.BASE_URL}images/climbing-game/assetsprite.png`;
-    platform.src = `${import.meta.env.BASE_URL}images/climbing-game/platformsprite.png`;
+    asset.src = assetspriteUrl;
+    platform.src = platformspriteUrl;
   });
 }
 
@@ -63,6 +65,7 @@ function drawSprite(
 export function renderPlatforms(
   ctx: CanvasRenderingContext2D,
   platformImg: HTMLImageElement,
+  assetImg: HTMLImageElement,
   config: LevelConfig,
   camera: Camera,
   screenWidth: number,
@@ -112,10 +115,10 @@ export function renderPlatforms(
   // Level 3 snow platforms
   renderPlatformArray(ctx, platformImg, config.level3, 'snow', camera);
 
-  // Finish platform
+  // Finish platform — uses asset sprite sheet, not platform sheet
   const fp = assetSprites.finishPlatform;
   const fpY = toCanvasY(WORLD_HEIGHT - config.finalPlatform.y - fp.height * SPRITE_SCALE, camera.y);
-  drawSprite(ctx, platformImg, fp.startX, fp.startY, fp.width, fp.height, config.finalPlatform.x * SPRITE_SCALE, fpY);
+  drawSprite(ctx, assetImg, fp.startX, fp.startY, fp.width, fp.height, config.finalPlatform.x * SPRITE_SCALE, fpY);
 }
 
 function renderPlatformArray(

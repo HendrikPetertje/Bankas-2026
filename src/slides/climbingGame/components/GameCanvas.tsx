@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import type { CharacterKind } from '../assets/Character';
 import type { LevelConfig } from '../assets/LevelConfig';
 import { WORLD_HEIGHT } from '../assets/LevelConfig';
-import { FEET_LEFT, FEET_RIGHT, platformSprites, SPRITE_SCALE } from '../assets/sprites';
+import { assetSprites, FEET_LEFT, FEET_RIGHT, platformSprites, SPRITE_SCALE } from '../assets/sprites';
 import type { Camera } from '../engine/camera';
 import { createCamera, updateCamera } from '../engine/camera';
 import { checkPlatformCollisions, checkRopeOverlap, clampToScreen, resolveAllRopes } from '../engine/collision';
@@ -15,6 +15,7 @@ import {
   MOVE_SPEED,
   startClimbDown,
   startClimbUp,
+  startIceSlide,
   startMoveLeft,
   startMoveRight,
   stopClimb,
@@ -84,14 +85,17 @@ export default function GameCanvas({ kind, level, onVictory }: GameCanvasProps) 
 
       const removeKeyboard = setupKeyboardInput(input);
 
-      function update(dt: number) {
-        if (!playerRef.current || !canvas) return;
+      function update(dt: number): boolean {
+        if (!playerRef.current || !canvas) return false;
         const dpr = window.devicePixelRatio || 1;
         const cssWidth = canvas.width / dpr;
         const gameScale = cssWidth / REF_WIDTH;
         const screenWidth = REF_WIDTH;
         const screenHeight = canvas.height / dpr / gameScale;
         const p = playerRef.current;
+
+        // Determine zone
+        const isIceZone = p.y < WORLD_HEIGHT - 4000;
 
         // Process input
         if (p.justLeftRope && !input.up && !input.down) {
@@ -101,9 +105,17 @@ export default function GameCanvas({ kind, level, onVictory }: GameCanvasProps) 
         if (!p.isOnRope) {
           if (p.isOnGround) {
             // On ground: free movement
-            if (input.left) startMoveLeft(p);
-            else if (input.right) startMoveRight(p);
-            else p.vx = 0;
+            if (input.left) {
+              startMoveLeft(p);
+              p.iceSlideDistance = 0;
+            } else if (input.right) {
+              startMoveRight(p);
+              p.iceSlideDistance = 0;
+            } else if (p.vx !== 0) {
+              // Key just released — trigger slide then zero vx
+              startIceSlide(p, isIceZone);
+              p.vx = 0;
+            }
           } else {
             // Airborne: set jumpDir from velocity if walked off edge
             if (p.jumpDir === 0 && p.vx !== 0) {
@@ -150,9 +162,6 @@ export default function GameCanvas({ kind, level, onVictory }: GameCanvasProps) 
           }
         }
 
-        // Determine zone
-        const isIceZone = p.y < WORLD_HEIGHT - 4000;
-
         applyPhysics(p, dt, isIceZone);
         if (!p.isOnRope) {
           checkPlatformCollisions(p, level, screenWidth);
@@ -173,17 +182,24 @@ export default function GameCanvas({ kind, level, onVictory }: GameCanvasProps) 
         updateClouds(clouds, dt, screenWidth);
         updateCamera(camera, p.y, screenHeight);
 
-        // Victory check: standing still on final platform for 1s
-        const fpY = WORLD_HEIGHT - level.finalPlatform.y;
-        if (p.isOnGround && Math.abs(p.y - fpY) < 20 && Math.abs(p.vx) < 1) {
+        // Victory check: on final platform ground line for 200ms
+        const fpGroundY =
+          WORLD_HEIGHT -
+          level.finalPlatform.y -
+          assetSprites.finishPlatform.height * SPRITE_SCALE +
+          assetSprites.finishPlatform.groundLineY * SPRITE_SCALE;
+        if (p.isOnGround && Math.abs(p.y - fpGroundY) < 20) {
           victoryTimerRef.current += dt;
           if (victoryTimerRef.current >= 1000) {
             const elapsed = performance.now() - startTimeRef.current;
             onVictory(elapsed);
+            return true; // stop the loop
           }
         } else {
           victoryTimerRef.current = 0;
         }
+
+        return false;
       }
 
       function render() {
@@ -201,7 +217,7 @@ export default function GameCanvas({ kind, level, onVictory }: GameCanvasProps) 
         ctx.clearRect(0, 0, screenWidth, screenHeight);
 
         // Platforms
-        renderPlatforms(ctx, platform, level, camera, screenWidth);
+        renderPlatforms(ctx, platform, asset, level, camera, screenWidth);
 
         // Ropes
         const ropes = resolveAllRopes(level);
@@ -237,27 +253,26 @@ export default function GameCanvas({ kind, level, onVictory }: GameCanvasProps) 
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
+    const parent = canvas.parentElement;
+    if (!parent) return;
 
     function resize() {
-      if (!canvas) return;
-      const parent = canvas.parentElement;
-      if (!parent) return;
+      if (!canvas || !parent) return;
       const dpr = window.devicePixelRatio || 1;
-      const cssW = parent.clientWidth;
-      const cssH = parent.clientHeight;
-      canvas.width = cssW * dpr;
-      canvas.height = cssH * dpr;
-      canvas.style.width = `${cssW}px`;
-      canvas.style.height = `${cssH}px`;
+      const w = parent.clientWidth;
+      const h = parent.clientHeight;
+      canvas.width = w * dpr;
+      canvas.height = h * dpr;
     }
 
     resize();
-    window.addEventListener('resize', resize);
-    return () => window.removeEventListener('resize', resize);
+    const ro = new ResizeObserver(resize);
+    ro.observe(parent);
+    return () => ro.disconnect();
   }, []);
 
   return (
-    <div className="relative h-full w-full">
+    <div className="relative h-full w-full overflow-hidden">
       <canvas
         ref={canvasRef}
         className="block h-full w-full"

@@ -7,9 +7,10 @@ const JUMP_VELOCITY = 550;
 const CLIMB_SPEED = 150;
 const TERMINAL_VELOCITY = 800;
 
-/** Ice zone friction — player slides extra after stopping */
-const ICE_FRICTION = 0.95; // velocity multiplier per frame when not pressing input
-const ICE_ROPE_SLIP = 30; // px/s downward slip when idle on rope in ice zone
+/** Ice zone constants */
+const ICE_SLIDE_SPEED = MOVE_SPEED * 0.5; // px/s slide speed
+const ICE_SLIDE_DISTANCE = 40; // px to slide after releasing input
+const ICE_ROPE_SLIP = 30; // px/s downward slip when idle on rope
 
 export function applyPhysics(player: PlayerState, dt: number, isIceZone: boolean): void {
   const dtSec = dt / 1000;
@@ -18,20 +19,27 @@ export function applyPhysics(player: PlayerState, dt: number, isIceZone: boolean
     // Rope physics: only vertical movement
     player.vx = 0;
 
-    if (isIceZone && player.vy === 0 && player.state !== 'climbing') {
-      // Slip downward on ice ropes when idle
+    if (isIceZone && player.vy === 0) {
+      // Slip downward on ice ropes when idle (involuntary)
       player.vy = ICE_ROPE_SLIP;
+      player.isIceSlipping = true;
+    } else {
+      player.isIceSlipping = false;
     }
 
     player.y += player.vy * dtSec;
     return;
   }
 
-  // Horizontal movement
-  if (isIceZone && player.vx !== 0 && player.state === 'standing') {
-    // Ice sliding: gradually slow down
-    player.vx *= ICE_FRICTION;
-    if (Math.abs(player.vx) < 5) player.vx = 0;
+  // Not on rope — clear slip flag
+  player.isIceSlipping = false;
+
+  // Ice slide: carry momentum after releasing input
+  if (isIceZone && player.isOnGround && player.vx === 0 && player.iceSlideDistance > 0) {
+    const dir = player.facingLeft ? -1 : 1;
+    const step = Math.min(ICE_SLIDE_SPEED * dtSec, player.iceSlideDistance);
+    player.x += dir * step;
+    player.iceSlideDistance -= step;
   }
 
   // Apply gravity when airborne
@@ -42,6 +50,15 @@ export function applyPhysics(player: PlayerState, dt: number, isIceZone: boolean
 
   player.x += player.vx * dtSec;
   player.y += player.vy * dtSec;
+}
+
+/** Called by input handler when player stops moving in ice zone */
+export function startIceSlide(player: PlayerState, isIceZone: boolean): void {
+  if (isIceZone && player.isOnGround && player.vx !== 0) {
+    player.iceSlideDistance = ICE_SLIDE_DISTANCE;
+  } else {
+    player.iceSlideDistance = 0;
+  }
 }
 
 export function startMoveLeft(player: PlayerState): void {

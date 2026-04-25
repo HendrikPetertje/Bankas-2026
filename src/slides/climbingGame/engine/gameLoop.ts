@@ -10,7 +10,7 @@ export interface GameLoop {
   reset: () => void;
 }
 
-export function createGameLoop(update: (dt: number) => void, render: () => void): GameLoop {
+export function createGameLoop(update: (dt: number) => boolean, render: () => void): GameLoop {
   let rafId = 0;
   let lastTime = 0;
   let accumulator = 0;
@@ -25,8 +25,13 @@ export function createGameLoop(update: (dt: number) => void, render: () => void)
     accumulator += elapsed;
 
     while (accumulator >= FIXED_DT) {
-      update(FIXED_DT);
+      const shouldStop = update(FIXED_DT);
       accumulator -= FIXED_DT;
+      if (shouldStop) {
+        running = false;
+        render();
+        return;
+      }
     }
 
     render();
