@@ -1,16 +1,17 @@
 import type { PlayerState } from './playerState';
 
 /** Physics constants (pixels per second, at original scale before SPRITE_SCALE) */
-const GRAVITY = 900;
-export const MOVE_SPEED = 200;
-const JUMP_VELOCITY = 550;
-const CLIMB_SPEED = 150;
-const TERMINAL_VELOCITY = 800;
+const SPEED_MULTIPLIER = 1.8;
+const GRAVITY = 900 * SPEED_MULTIPLIER * SPEED_MULTIPLIER;
+export const MOVE_SPEED = 200 * SPEED_MULTIPLIER;
+const JUMP_VELOCITY = 550 * SPEED_MULTIPLIER;
+const CLIMB_SPEED = 150 * SPEED_MULTIPLIER;
+const TERMINAL_VELOCITY = 800 * SPEED_MULTIPLIER;
 
 /** Ice zone constants */
 const ICE_SLIDE_SPEED = MOVE_SPEED * 0.5; // px/s slide speed
 const ICE_SLIDE_DISTANCE = 40; // px to slide after releasing input
-const ICE_ROPE_SLIP = 30; // px/s downward slip when idle on rope
+const ICE_ROPE_SLIP = 30 * SPEED_MULTIPLIER; // px/s downward slip when idle on rope
 
 export function applyPhysics(player: PlayerState, dt: number, isIceZone: boolean): void {
   const dtSec = dt / 1000;
