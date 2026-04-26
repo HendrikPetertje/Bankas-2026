@@ -222,11 +222,11 @@ export default function GameCanvas({ kind, level, onVictory }: GameCanvasProps) 
         ctx.clearRect(0, 0, screenWidth, screenHeight);
 
         // Platforms
-        renderPlatforms(ctx, platform, asset, level, camera, screenWidth);
+        renderPlatforms(ctx, platform, asset, level, camera, screenWidth, screenHeight);
 
         // Ropes
         const ropes = resolveAllRopes(level);
-        renderRopes(ctx, asset, ropes, camera);
+        renderRopes(ctx, asset, ropes, camera, screenHeight);
 
         // Player
         renderPlayer(ctx, asset, playerRef.current, camera);

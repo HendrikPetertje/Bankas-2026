@@ -3,6 +3,7 @@ import assetspriteUrl from '../assets/images/assetsprite.png';
 import platformspriteUrl from '../assets/images/platformsprite.png';
 import type { LevelConfig, PlatformPlacement } from '../assets/LevelConfig';
 import { WORLD_HEIGHT } from '../assets/LevelConfig';
+import type { PlatformSprite } from '../assets/sprites';
 import { assetSprites, platformSprites, SPRITE_SCALE } from '../assets/sprites';
 import type { Camera } from './camera';
 import type { ResolvedRope } from './collision';
@@ -69,56 +70,51 @@ export function renderPlatforms(
   config: LevelConfig,
   camera: Camera,
   screenWidth: number,
+  screenHeight: number,
 ): void {
   const fl = platformSprites.forestLong[0];
 
   // Underground fill below base platform ground line (render before platform so it's behind)
   const baseY = toCanvasY(WORLD_HEIGHT - config.basePlatform.y - fl.height * SPRITE_SCALE, camera.y);
   const undergroundTop = baseY + fl.groundLineY * SPRITE_SCALE;
-  const undergroundHeight = screenWidth * 2;
-  const grad = ctx.createLinearGradient(0, undergroundTop, 0, undergroundTop + undergroundHeight);
-  grad.addColorStop(0, '#5c3a1e');
-  grad.addColorStop(0.3, '#3d2b1f');
-  grad.addColorStop(1, '#0a0604');
-  ctx.fillStyle = grad;
-  ctx.fillRect(0, undergroundTop, screenWidth, undergroundHeight);
+  if (undergroundTop < screenHeight) {
+    const undergroundHeight = screenHeight - undergroundTop;
+    const grad = ctx.createLinearGradient(0, undergroundTop, 0, screenHeight);
+    grad.addColorStop(0, '#5c3a1e');
+    grad.addColorStop(0.3, '#3d2b1f');
+    grad.addColorStop(1, '#0a0604');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, undergroundTop, screenWidth, undergroundHeight);
+  }
 
   // Base platform (forestLong[0], stretch to screen width)
-  ctx.drawImage(
-    platformImg,
-    fl.startX,
-    fl.startY,
-    fl.width,
-    fl.height,
-    0,
-    baseY,
-    screenWidth,
-    fl.height * SPRITE_SCALE,
-  );
+  renderFullWidthPlatform(ctx, platformImg, fl, baseY, screenWidth, screenHeight);
 
   // Level 1 forest platforms
-  renderPlatformArray(ctx, platformImg, config.level1, 'forest', camera);
+  renderPlatformArray(ctx, platformImg, config.level1, 'forest', camera, screenHeight);
 
   // Level 2 base (longStone)
   const ls = platformSprites.longStone[0];
   const l2y = toCanvasY(WORLD_HEIGHT - config.level2BasePlatform.y - ls.height * SPRITE_SCALE, camera.y);
-  ctx.drawImage(platformImg, ls.startX, ls.startY, ls.width, ls.height, 0, l2y, screenWidth, ls.height * SPRITE_SCALE);
+  renderFullWidthPlatform(ctx, platformImg, ls, l2y, screenWidth, screenHeight);
 
   // Level 2 stone platforms
-  renderPlatformArray(ctx, platformImg, config.level2, 'stone', camera);
+  renderPlatformArray(ctx, platformImg, config.level2, 'stone', camera, screenHeight);
 
   // Level 3 base (longSnow)
   const sn = platformSprites.longSnow[0];
   const l3y = toCanvasY(WORLD_HEIGHT - config.level3BasePlatform.y - sn.height * SPRITE_SCALE, camera.y);
-  ctx.drawImage(platformImg, sn.startX, sn.startY, sn.width, sn.height, 0, l3y, screenWidth, sn.height * SPRITE_SCALE);
+  renderFullWidthPlatform(ctx, platformImg, sn, l3y, screenWidth, screenHeight);
 
   // Level 3 snow platforms
-  renderPlatformArray(ctx, platformImg, config.level3, 'snow', camera);
+  renderPlatformArray(ctx, platformImg, config.level3, 'snow', camera, screenHeight);
 
   // Finish platform — uses asset sprite sheet, not platform sheet
   const fp = assetSprites.finishPlatform;
   const fpY = toCanvasY(WORLD_HEIGHT - config.finalPlatform.y - fp.height * SPRITE_SCALE, camera.y);
-  drawSprite(ctx, assetImg, fp.startX, fp.startY, fp.width, fp.height, config.finalPlatform.x * SPRITE_SCALE, fpY);
+  if (isVisibleVertically(fpY, fp.height * SPRITE_SCALE, screenHeight)) {
+    drawSprite(ctx, assetImg, fp.startX, fp.startY, fp.width, fp.height, config.finalPlatform.x * SPRITE_SCALE, fpY);
+  }
 }
 
 function renderPlatformArray(
@@ -127,13 +123,38 @@ function renderPlatformArray(
   platforms: PlatformPlacement[],
   type: 'forest' | 'stone' | 'snow',
   camera: Camera,
+  screenHeight: number,
 ): void {
   const sprites = platformSprites[type];
   for (const p of platforms) {
     const s = sprites[p.variant];
     const cy = toCanvasY(WORLD_HEIGHT - p.y - s.height * SPRITE_SCALE, camera.y);
+    if (!isVisibleVertically(cy, s.height * SPRITE_SCALE, screenHeight)) continue;
     drawSprite(ctx, img, s.startX, s.startY, s.width, s.height, p.x * SPRITE_SCALE, cy);
   }
+}
+
+function renderFullWidthPlatform(
+  ctx: CanvasRenderingContext2D,
+  platformImg: HTMLImageElement,
+  sprite: PlatformSprite,
+  y: number,
+  screenWidth: number,
+  screenHeight: number,
+): void {
+  if (!isVisibleVertically(y, sprite.height * SPRITE_SCALE, screenHeight)) return;
+
+  ctx.drawImage(
+    platformImg,
+    sprite.startX,
+    sprite.startY,
+    sprite.width,
+    sprite.height,
+    0,
+    y,
+    screenWidth,
+    sprite.height * SPRITE_SCALE,
+  );
 }
 
 /** Render all ropes */
@@ -142,16 +163,23 @@ export function renderRopes(
   assetImg: HTMLImageElement,
   ropes: ResolvedRope[],
   camera: Camera,
+  screenHeight: number,
 ): void {
   const { top, repeatableMiddle, bottom } = assetSprites.rope;
+  const topHeight = top.height * SPRITE_SCALE;
+  const bottomHeight = bottom.height * SPRITE_SCALE;
 
   for (const rope of ropes) {
+    const ropeTop = toCanvasY(rope.topY, camera.y);
+    const ropeHeight = rope.bottomY - rope.topY + topHeight + bottomHeight;
+    if (!isVisibleVertically(ropeTop, ropeHeight, screenHeight)) continue;
+
     const rx = rope.screenX;
 
     // Draw top
-    let cy = toCanvasY(rope.topY, camera.y);
+    let cy = ropeTop;
     drawSprite(ctx, assetImg, top.startX, top.startY, top.width, top.height, rx, cy);
-    cy += top.height * SPRITE_SCALE;
+    cy += topHeight;
 
     // Draw repeatable middle segments
     const middleH = repeatableMiddle.height * SPRITE_SCALE;
@@ -179,6 +207,11 @@ export function renderRopes(
     // Draw bottom
     drawSprite(ctx, assetImg, bottom.startX, bottom.startY, bottom.width, bottom.height, rx, cy);
   }
+}
+
+function isVisibleVertically(top: number, height: number, screenHeight: number): boolean {
+  const bottom = top + height;
+  return bottom >= 0 && top <= screenHeight;
 }
 
 /** Render the player character */
