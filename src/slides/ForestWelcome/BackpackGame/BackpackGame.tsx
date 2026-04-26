@@ -152,8 +152,8 @@ export default function BackpackGame() {
           flesta av dessa föremål separerades dock när de kom in i den här världen.
         </p>
         <p className="mt-4 max-w-md font-body text-sm leading-relaxed md:text-[length:1rem]">
-          Varje föremål i skogen hör ihop med ett annat föremål i skogen. Hitta rätt kombinationer snabbt — att bestiga
-          berget framför er är förmodligen ingen bra idé om det blir mörkt!
+          Varje föremål i skogen hör ihop med ett annat föremål i skogen. Hitta rätt kombinationer snabbt, att bestiga
+          berget framför er sedan är förmodligen ingen bra idé om det blir mörkt!
         </p>
         <div className="mt-8">
           <BlueButton onClick={() => setPhase('playing')}>Starta spelet</BlueButton>

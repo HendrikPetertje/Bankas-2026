@@ -41,7 +41,7 @@ export default function SelectionScreen({ assetImg, platformImg, onSelect }: Sel
 
   return (
     <div className="flex flex-1 flex-col items-center justify-center py-16">
-      <p className="mb-6 font-body text-lg text-text">Välj din karaktär</p>
+      <p className="mb-6 font-body text-lg text-text">Vem ska gå först? Välj din karaktär</p>
 
       <div
         className="relative"

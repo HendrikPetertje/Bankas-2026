@@ -1,4 +1,5 @@
 import BlueButton from '../../../../components/BlueButton/BlueButton';
+import keyboardInstructSrc from '../assets/images/keyboard-instruct.png';
 
 interface IntroScreenProps {
   onContinue: () => void;
@@ -21,10 +22,17 @@ export default function IntroScreen({ onContinue }: IntroScreenProps) {
         </p>
 
         <p className="font-body text-sm font-bold text-text">
-          (Använd joysticken på mobil eller pekskärm, eller piltangenter och mellanslag på tangentbord)
+          Använd piltangenter och mellanslag på tangentbord <br /> eller joysticken på mobil eller pekskärm..
         </p>
 
-        <p className="font-body text-[length:1rem] font-semibold">Det är dags att börja klättra, vem ska gå först?</p>
+        <p className="px-5 opacity-60">
+          <img
+            src={keyboardInstructSrc}
+            alt="bildförklaring"
+          />
+        </p>
+
+        <p className="font-body text-[length:1rem] font-semibold">Det är dags att börja klättra</p>
 
         <BlueButton onClick={onContinue}>Fortsätt</BlueButton>
       </div>
