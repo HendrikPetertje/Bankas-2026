@@ -8,12 +8,17 @@ import type { PlayerState } from './playerState';
 const FEET_L = FEET_LEFT * SPRITE_SCALE;
 const FEET_R = FEET_RIGHT * SPRITE_SCALE;
 
-interface ResolvedPlatform {
-  x: number;
-  y: number; // bottom-up y
-  width: number;
-  height: number;
-  groundLineY: number;
+export interface ResolvedPlatform {
+  left: number;
+  right: number;
+  topY: number;
+}
+
+export interface ResolvedLevel {
+  platforms: ResolvedPlatform[];
+  ropes: ResolvedRope[];
+  baseGroundY: number;
+  finalPlatformGroundY: number;
 }
 
 /** A rope resolved to internal (top-down) world coordinates */
@@ -40,63 +45,52 @@ function resolvePlatforms(config: LevelConfig, screenWidth: number): ResolvedPla
 
   // Base platform (forestLong, stretches full width)
   const fl = platformSprites.forestLong[0];
-  platforms.push({
-    x: config.basePlatform.x,
-    y: config.basePlatform.y,
-    width: screenWidth / SPRITE_SCALE,
-    height: fl.height,
-    groundLineY: fl.groundLineY,
-  });
+  platforms.push(resolvePlatform(config.basePlatform.x, config.basePlatform.y, screenWidth / SPRITE_SCALE, fl));
 
   // Level 1 forest
   for (const p of config.level1) {
     const s = platformSprites.forest[p.variant];
-    platforms.push({ x: p.x, y: p.y, width: s.width, height: s.height, groundLineY: s.groundLineY });
+    platforms.push(resolvePlatform(p.x, p.y, s.width, s));
   }
 
   // Level 2 base (longStone)
   const ls = platformSprites.longStone[0];
-  platforms.push({
-    x: config.level2BasePlatform.x,
-    y: config.level2BasePlatform.y,
-    width: screenWidth / SPRITE_SCALE,
-    height: ls.height,
-    groundLineY: ls.groundLineY,
-  });
+  platforms.push(
+    resolvePlatform(config.level2BasePlatform.x, config.level2BasePlatform.y, screenWidth / SPRITE_SCALE, ls),
+  );
 
   // Level 2 stone
   for (const p of config.level2) {
     const s = platformSprites.stone[p.variant];
-    platforms.push({ x: p.x, y: p.y, width: s.width, height: s.height, groundLineY: s.groundLineY });
+    platforms.push(resolvePlatform(p.x, p.y, s.width, s));
   }
 
   // Level 3 base (longSnow)
   const sn = platformSprites.longSnow[0];
-  platforms.push({
-    x: config.level3BasePlatform.x,
-    y: config.level3BasePlatform.y,
-    width: screenWidth / SPRITE_SCALE,
-    height: sn.height,
-    groundLineY: sn.groundLineY,
-  });
+  platforms.push(
+    resolvePlatform(config.level3BasePlatform.x, config.level3BasePlatform.y, screenWidth / SPRITE_SCALE, sn),
+  );
 
   // Level 3 snow
   for (const p of config.level3) {
     const s = platformSprites.snow[p.variant];
-    platforms.push({ x: p.x, y: p.y, width: s.width, height: s.height, groundLineY: s.groundLineY });
+    platforms.push(resolvePlatform(p.x, p.y, s.width, s));
   }
 
   // Final platform (from asset sprite sheet)
   const fp = assetSprites.finishPlatform;
-  platforms.push({
-    x: config.finalPlatform.x,
-    y: config.finalPlatform.y,
-    width: fp.width,
-    height: fp.height,
-    groundLineY: fp.groundLineY,
-  });
+  platforms.push(resolvePlatform(config.finalPlatform.x, config.finalPlatform.y, fp.width, fp));
 
   return platforms;
+}
+
+function resolvePlatform(x: number, y: number, width: number, sprite: PlatformSprite): ResolvedPlatform {
+  const topY = platformGroundLineY(y, sprite);
+  return {
+    left: x * SPRITE_SCALE,
+    right: (x + width) * SPRITE_SCALE,
+    topY,
+  };
 }
 
 /** Extract all ropes from platforms, resolved to internal coordinates */
@@ -127,24 +121,36 @@ export function resolveAllRopes(config: LevelConfig): ResolvedRope[] {
   ];
 }
 
+export function resolveLevel(config: LevelConfig, screenWidth: number): ResolvedLevel {
+  const fl = platformSprites.forestLong[0];
+  const fp = assetSprites.finishPlatform;
+
+  return {
+    platforms: resolvePlatforms(config, screenWidth),
+    ropes: resolveAllRopes(config),
+    baseGroundY: platformGroundLineY(config.basePlatform.y, fl),
+    finalPlatformGroundY: platformGroundLineY(config.finalPlatform.y, fp),
+  };
+}
+
 /**
  * Check platform collisions and resolve landing.
  */
-export function checkPlatformCollisions(player: PlayerState, config: LevelConfig, screenWidth: number): void {
-  const platforms = resolvePlatforms(config, screenWidth);
-
+export function checkPlatformCollisions(player: PlayerState, platforms: ResolvedPlatform[]): void {
   const feetCenter = player.x + (FEET_L + FEET_R) / 2;
   const feetY = player.y;
 
   player.isOnGround = false;
 
   for (const plat of platforms) {
-    const platTop = WORLD_HEIGHT - plat.y - plat.height * SPRITE_SCALE + plat.groundLineY * SPRITE_SCALE;
-    const platLeft = plat.x * SPRITE_SCALE;
-    const platRight = platLeft + plat.width * SPRITE_SCALE;
+    const platTop = plat.topY;
+
+    if (feetY < platTop - 8 || feetY > platTop + Math.max(20, player.vy * 0.02) + 3) {
+      continue;
+    }
 
     // Check horizontal overlap — feet center must be on the platform
-    if (feetCenter < platLeft || feetCenter > platRight) continue;
+    if (feetCenter < plat.left || feetCenter > plat.right) continue;
 
     // Check if player is falling onto platform surface
     // Use wider catch window for high-velocity falls to prevent tunneling
@@ -170,22 +176,17 @@ export function checkPlatformCollisions(player: PlayerState, config: LevelConfig
 /** How far below a rope's bottom the player can still grab it (shoulder height) */
 const ROPE_GRAB_REACH = 50;
 
-/**
- * Check if player overlaps a rope.
- * Returns the resolved rope if overlapping, null otherwise.
- */
-export function checkRopeOverlap(player: PlayerState, config: LevelConfig): ResolvedRope | null {
-  const ropes = resolveAllRopes(config);
+export function checkRopeOverlap(player: PlayerState, ropes: ResolvedRope[]): ResolvedRope | null {
   const feetCenterX = player.x + (FEET_L + FEET_R) / 2;
   const ropeHalfWidth = (37 * SPRITE_SCALE) / 2; // rope sprite width
 
   for (const rope of ropes) {
+    if (player.y < rope.topY || player.y > rope.bottomY + ROPE_GRAB_REACH) continue;
+
     const ropeCenterX = rope.screenX + ropeHalfWidth;
 
     if (Math.abs(feetCenterX - ropeCenterX) < ropeHalfWidth + 10) {
-      if (player.y >= rope.topY && player.y <= rope.bottomY + ROPE_GRAB_REACH) {
-        return rope;
-      }
+      return rope;
     }
   }
 
@@ -193,15 +194,13 @@ export function checkRopeOverlap(player: PlayerState, config: LevelConfig): Reso
 }
 
 /** Clamp player to screen boundaries and base platform floor */
-export function clampToScreen(player: PlayerState, screenWidth: number, config: LevelConfig): void {
+export function clampToScreen(player: PlayerState, screenWidth: number, baseGroundY: number): void {
   if (player.x < 0) player.x = 0;
 
   const maxX = screenWidth - FEET_R;
   if (player.x > maxX) player.x = maxX;
 
   // Don't fall below the base platform ground line
-  const fl = platformSprites.forestLong[0];
-  const baseGroundY = platformGroundLineY(config.basePlatform.y, fl);
   if (player.y > baseGroundY) {
     player.y = baseGroundY;
     player.vy = 0;

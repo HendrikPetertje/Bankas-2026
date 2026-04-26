@@ -1,11 +1,10 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { CharacterKind } from '../assets/Character';
 import type { LevelConfig } from '../assets/LevelConfig';
-import { WORLD_HEIGHT } from '../assets/LevelConfig';
-import { assetSprites, FEET_LEFT, FEET_RIGHT, platformSprites, SPRITE_SCALE } from '../assets/sprites';
+import { FEET_LEFT, FEET_RIGHT, SPRITE_SCALE } from '../assets/sprites';
 import type { Camera } from '../engine/camera';
 import { createCamera, updateCamera } from '../engine/camera';
-import { checkPlatformCollisions, checkRopeOverlap, clampToScreen, resolveAllRopes } from '../engine/collision';
+import { checkPlatformCollisions, checkRopeOverlap, clampToScreen, resolveLevel } from '../engine/collision';
 import { createGameLoop } from '../engine/gameLoop';
 import type { InputState } from '../engine/input';
 import { createInputState, setupKeyboardInput } from '../engine/input';
@@ -58,13 +57,11 @@ export default function GameCanvas({ kind, level, onVictory }: GameCanvasProps) 
   const victoryTimerRef = useRef(0);
   const imagesRef = useRef<{ asset: HTMLImageElement; platform: HTMLImageElement } | null>(null);
   const [imagesLoaded, setImagesLoaded] = useState(false);
+  const resolvedLevel = useMemo(() => resolveLevel(level, REF_WIDTH), [level]);
 
   const initPlayer = useCallback(() => {
-    // Start on the base platform
-    const fl = platformSprites.forestLong[0];
-    const groundY = WORLD_HEIGHT - level.basePlatform.y - fl.height * SPRITE_SCALE + fl.groundLineY * SPRITE_SCALE;
-    return createPlayerState(kind, 100, groundY);
-  }, [kind, level]);
+    return createPlayerState(kind, 100, resolvedLevel.baseGroundY);
+  }, [kind, resolvedLevel.baseGroundY]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -100,7 +97,7 @@ export default function GameCanvas({ kind, level, onVictory }: GameCanvasProps) 
         const p = playerRef.current;
 
         // Determine zone
-        const isIceZone = p.y < WORLD_HEIGHT - 4000;
+        const isIceZone = p.y < 2200;
 
         // Process input
         if (p.justLeftRope && !input.up && !input.down) {
@@ -148,7 +145,7 @@ export default function GameCanvas({ kind, level, onVictory }: GameCanvasProps) 
 
         // Check if player wants to grab a rope
         if (!p.isOnRope && !p.justLeftRope && (input.up || input.down)) {
-          const rope = checkRopeOverlap(p, level);
+          const rope = checkRopeOverlap(p, resolvedLevel.ropes);
           if (rope) {
             p.isOnRope = true;
             p.isOnGround = false;
@@ -169,13 +166,13 @@ export default function GameCanvas({ kind, level, onVictory }: GameCanvasProps) 
 
         applyPhysics(p, dt, isIceZone);
         if (!p.isOnRope) {
-          checkPlatformCollisions(p, level, screenWidth);
+          checkPlatformCollisions(p, resolvedLevel.platforms);
         }
-        clampToScreen(p, screenWidth, level);
+        clampToScreen(p, screenWidth, resolvedLevel.baseGroundY);
 
         // If on rope, check if climbed past top or bottom
         if (p.isOnRope) {
-          const rope = checkRopeOverlap(p, level);
+          const rope = checkRopeOverlap(p, resolvedLevel.ropes);
           if (!rope || p.y > rope.bottomY || p.y < rope.topY) {
             p.isOnRope = false;
             p.justLeftRope = true;
@@ -188,12 +185,7 @@ export default function GameCanvas({ kind, level, onVictory }: GameCanvasProps) 
         updateCamera(camera, p.y, screenHeight);
 
         // Victory check: on final platform ground line for 200ms
-        const fpGroundY =
-          WORLD_HEIGHT -
-          level.finalPlatform.y -
-          assetSprites.finishPlatform.height * SPRITE_SCALE +
-          assetSprites.finishPlatform.groundLineY * SPRITE_SCALE;
-        if (p.isOnGround && Math.abs(p.y - fpGroundY) < 20) {
+        if (p.isOnGround && Math.abs(p.y - resolvedLevel.finalPlatformGroundY) < 20) {
           victoryTimerRef.current += dt;
           if (victoryTimerRef.current >= 1000) {
             const elapsed = performance.now() - startTimeRef.current;
@@ -225,8 +217,7 @@ export default function GameCanvas({ kind, level, onVictory }: GameCanvasProps) 
         renderPlatforms(ctx, platform, asset, level, camera, screenWidth, screenHeight);
 
         // Ropes
-        const ropes = resolveAllRopes(level);
-        renderRopes(ctx, asset, ropes, camera, screenHeight);
+        renderRopes(ctx, asset, resolvedLevel.ropes, camera, screenHeight);
 
         // Player
         renderPlayer(ctx, asset, playerRef.current, camera);
@@ -252,7 +243,7 @@ export default function GameCanvas({ kind, level, onVictory }: GameCanvasProps) 
     return () => {
       if (cleanup) cleanup();
     };
-  }, [level, onVictory, initPlayer]);
+  }, [level, onVictory, initPlayer, resolvedLevel]);
 
   // Resize canvas to fill container
   useEffect(() => {
