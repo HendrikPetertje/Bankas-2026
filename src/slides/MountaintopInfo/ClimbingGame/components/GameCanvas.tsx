@@ -42,6 +42,11 @@ interface GameCanvasProps {
 
 /** Reference screen width — at this width SPRITE_SCALE is 1:1 */
 const REF_WIDTH = 675;
+const MAX_CANVAS_DPR = 1.5;
+
+function getCanvasDpr(): number {
+  return Math.min(window.devicePixelRatio || 1, MAX_CANVAS_DPR);
+}
 
 export default function GameCanvas({ kind, level, onVictory }: GameCanvasProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -87,7 +92,7 @@ export default function GameCanvas({ kind, level, onVictory }: GameCanvasProps) 
 
       function update(dt: number): boolean {
         if (!playerRef.current || !canvas) return false;
-        const dpr = window.devicePixelRatio || 1;
+        const dpr = getCanvasDpr();
         const cssWidth = canvas.width / dpr;
         const gameScale = cssWidth / REF_WIDTH;
         const screenWidth = REF_WIDTH;
@@ -206,7 +211,7 @@ export default function GameCanvas({ kind, level, onVictory }: GameCanvasProps) 
         if (!imagesRef.current || !playerRef.current || !ctx || !canvas) return;
         const { asset, platform } = imagesRef.current;
         const camera = cameraRef.current;
-        const dpr = window.devicePixelRatio || 1;
+        const dpr = getCanvasDpr();
         const cssWidth = canvas.width / dpr;
         const gameScale = cssWidth / REF_WIDTH;
         const screenWidth = REF_WIDTH;
@@ -258,7 +263,7 @@ export default function GameCanvas({ kind, level, onVictory }: GameCanvasProps) 
 
     function resize() {
       if (!canvas || !parent) return;
-      const dpr = window.devicePixelRatio || 1;
+      const dpr = getCanvasDpr();
       const w = parent.clientWidth;
       const h = parent.clientHeight;
       canvas.width = w * dpr;
