@@ -70,10 +70,14 @@ export default function GameCanvas({ kind, level, onVictory }: GameCanvasProps) 
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    let cleanup: (() => void) | undefined;
+    let disposed = false;
+    let removeKeyboard: (() => void) | null = null;
+    let stopLoop: (() => void) | null = null;
 
     const init = async () => {
       const imgs = await loadImages();
+      if (disposed) return;
+
       imagesRef.current = imgs;
       setImagesLoaded(true);
 
@@ -85,7 +89,12 @@ export default function GameCanvas({ kind, level, onVictory }: GameCanvasProps) 
       const camera = cameraRef.current;
       const clouds = cloudsRef.current;
 
-      const removeKeyboard = setupKeyboardInput(input);
+      removeKeyboard = setupKeyboardInput(input);
+      if (disposed) {
+        removeKeyboard();
+        removeKeyboard = null;
+        return;
+      }
 
       function update(dt: number): boolean {
         if (!playerRef.current || !canvas) return false;
@@ -228,12 +237,14 @@ export default function GameCanvas({ kind, level, onVictory }: GameCanvasProps) 
       }
 
       const loop = createGameLoop(update, render);
-      loop.start();
+      stopLoop = () => loop.stop();
+      if (disposed) {
+        stopLoop();
+        stopLoop = null;
+        return;
+      }
 
-      cleanup = () => {
-        loop.stop();
-        removeKeyboard();
-      };
+      loop.start();
     };
 
     init().catch(() => {
@@ -241,7 +252,9 @@ export default function GameCanvas({ kind, level, onVictory }: GameCanvasProps) 
     });
 
     return () => {
-      if (cleanup) cleanup();
+      disposed = true;
+      stopLoop?.();
+      removeKeyboard?.();
     };
   }, [level, onVictory, initPlayer, resolvedLevel]);
 
