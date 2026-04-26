@@ -111,7 +111,8 @@ Content order per slide:
 - Images are provided externally — the code renders `<img>` elements with
   styling conventions:
   - Edges fade to `#fafafa` by default.
-- All images referenced from `public/images/` or `src/assets/`.
+- All images referenced from `[ComponentDir]/images/` or `src/assets/`. don't
+  use public
 
 ---
 
@@ -149,10 +150,9 @@ Content order per slide:
 - **Text**: Camp information in two columns above the image (dates, ages,
   pricing, practical details).
 - **Game trigger**: Binoculars icon.
-- **Game — "Creature Spotter"** (click-fast / timed):
-  Modal styled as binocular viewfinder. Creatures (birds, dragons, fantasy
-  animals) fly across the view. Kids click them for points. Different
-  creatures score differently. Timer counts down.
+- **Game — "Mountain climb"** (retro platform game):
+  Modal styled as a game world. player has to move up the mountain by jumping
+  from platform to platform, climb ropes, etc.
 
 ### Slide 4 — "The Plains" (`program`)
 
