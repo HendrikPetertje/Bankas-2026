@@ -113,7 +113,11 @@ export default function FarmingGame() {
 
   // Garden frame
   if (!token || !garden) {
-    return <LoadingOverlay />;
+    return (
+      <div className="min-h-[100svh] md:min-h-[60vh] relative">
+        <LoadingOverlay />
+      </div>
+    );
   }
 
   return (
