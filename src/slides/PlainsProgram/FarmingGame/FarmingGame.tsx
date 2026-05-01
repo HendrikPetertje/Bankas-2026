@@ -71,6 +71,7 @@ export default function FarmingGame() {
   const [frame, setFrame] = useState<GameFrame>('intro');
   const [token, setToken] = useState<string | null>(null);
   const [garden, setGarden] = useState<Garden | null>(null);
+  const [isNewAccount, setIsNewAccount] = useState(false);
   const [loginError, setLoginError] = useState<string | null>(null);
 
   const assets = useMemo(() => ALL_ASSETS, []);
@@ -98,9 +99,10 @@ export default function FarmingGame() {
           <div className="bg-love/90 px-4 py-2 text-center text-white font-body text-sm">{loginError}</div>
         )}
         <LoginFrame
-          onAuthenticated={(t, g, _username) => {
+          onAuthenticated={(t, g, _username, isNew) => {
             setToken(t);
             setGarden(g);
+            setIsNewAccount(isNew);
             setFrame('garden');
           }}
           onError={setLoginError}
@@ -118,6 +120,7 @@ export default function FarmingGame() {
     <GardenFrame
       token={token}
       initialGarden={garden}
+      showInfoOnMount={isNewAccount}
       onAuthExpired={() => {
         setToken(null);
         setGarden(null);

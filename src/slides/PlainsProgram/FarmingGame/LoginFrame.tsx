@@ -5,7 +5,7 @@ import LoadingOverlay from './LoadingOverlay';
 import type { Garden, StoredAccount } from './types';
 
 interface LoginFrameProps {
-  onAuthenticated: (token: string, garden: Garden, username: string) => void;
+  onAuthenticated: (token: string, garden: Garden, username: string, isNew: boolean) => void;
   onError: (msg: string) => void;
 }
 
@@ -24,7 +24,7 @@ export default function LoginFrame({ onAuthenticated, onError }: LoginFrameProps
     try {
       const res = isSignUp ? await signUp(username.trim(), pin) : await login(username.trim(), pin);
       saveAccount(res.garden.user_name, res.token);
-      onAuthenticated(res.token, res.garden, res.garden.user_name);
+      onAuthenticated(res.token, res.garden, res.garden.user_name, isSignUp);
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'Något gick fel.';
       onError(msg);
@@ -37,7 +37,7 @@ export default function LoginFrame({ onAuthenticated, onError }: LoginFrameProps
     setLoading(true);
     try {
       const res = await getMyFarm(account.token);
-      onAuthenticated(account.token, res.garden, account.username);
+      onAuthenticated(account.token, res.garden, account.username, false);
     } catch (err: unknown) {
       if (err instanceof AuthExpiredError) {
         removeAccount(account.username);

@@ -15,10 +15,11 @@ import useGarden from './useGarden';
 interface GardenFrameProps {
   token: string;
   initialGarden: Garden;
+  showInfoOnMount?: boolean;
   onAuthExpired: () => void;
 }
 
-export default function GardenFrame({ token, initialGarden, onAuthExpired }: GardenFrameProps) {
+export default function GardenFrame({ token, initialGarden, showInfoOnMount, onAuthExpired }: GardenFrameProps) {
   const {
     garden,
     plants,
@@ -35,8 +36,9 @@ export default function GardenFrame({ token, initialGarden, onAuthExpired }: Gar
     authExpired,
   } = useGarden(token, initialGarden);
 
-  const [infoOpen, setInfoOpen] = useState(false);
+  const [infoOpen, setInfoOpen] = useState(showInfoOnMount ?? false);
   const [cursorPos, setCursorPos] = useState<{ x: number; y: number } | null>(null);
+  const [cursorPressed, setCursorPressed] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
   // Track mouse position for custom cursor
@@ -51,13 +53,23 @@ export default function GardenFrame({ token, initialGarden, onAuthExpired }: Gar
     function handleLeave() {
       setCursorPos(null);
     }
+    function handleDown() {
+      setCursorPressed(true);
+    }
+    function handleUp() {
+      setCursorPressed(false);
+    }
     const el = containerRef.current;
     if (!el) return;
     el.addEventListener('mousemove', handleMove);
     el.addEventListener('mouseleave', handleLeave);
+    el.addEventListener('mousedown', handleDown);
+    el.addEventListener('mouseup', handleUp);
     return () => {
       el.removeEventListener('mousemove', handleMove);
       el.removeEventListener('mouseleave', handleLeave);
+      el.removeEventListener('mousedown', handleDown);
+      el.removeEventListener('mouseup', handleUp);
     };
   }, [activeTool]);
 
@@ -217,7 +229,8 @@ export default function GardenFrame({ token, initialGarden, onAuthExpired }: Gar
             <img
               src={cursorUrl}
               alt=""
-              className="w-8 h-8"
+              className="w-8 h-8 transition-transform duration-100"
+              style={{ transform: cursorPressed ? 'rotate(-20deg)' : 'rotate(0deg)' }}
             />
           </div>,
           document.body,

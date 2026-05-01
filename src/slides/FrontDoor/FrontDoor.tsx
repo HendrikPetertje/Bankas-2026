@@ -8,6 +8,7 @@ import overlay1 from './images/the-door-cutout-overlay-1.png';
 import overlay2 from './images/the-door-cutout-overlay-2.png';
 import overlay3 from './images/the-door-cutout-overlay-3.png';
 import overlayHover from './images/the-door-cutout-overlay-hover.png';
+import RegistrationBanner from './RegistrationBanner';
 
 interface FrontDoorProps {
   onNavigate: (slide: 'welcome') => void;
@@ -80,6 +81,8 @@ export default function FrontDoor({ onNavigate }: FrontDoorProps) {
             Bänkåsvikens gård och studieförbundet Bilda presenterar
           </h1>
         </div>
+
+        <RegistrationBanner />
       </div>
 
       {/* Door image with overlays */}
@@ -134,7 +137,7 @@ export default function FrontDoor({ onNavigate }: FrontDoorProps) {
 
       {/* Tooltip */}
       <p
-        className="z-20 mt-4 mb-8 text-sm text-subtle transition-opacity duration-700"
+        className="z-20 mt-4 mb-8 text-base text-subtle transition-opacity duration-700"
         style={{ opacity: tooltipVisible ? 1 : 0 }}
       >
         Tryck på dörren för att fortsätta
