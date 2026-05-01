@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import type { SlideId } from '../../App';
 import MarkdownContent from '../../components/MarkdownContent/MarkdownContent';
 import Slide from '../../components/Slide';
+import FarmingGame from './FarmingGame/FarmingGame';
 import bigClouds from './images/big-clouds.png';
 import clouds from './images/clouds.png';
 import flockOfBirds from './images/flock-of-birds.png';
@@ -51,6 +52,7 @@ export default function PlainsProgram({
   const [hovered, setHovered] = useState(false);
   const [clicked, setClicked] = useState(false);
   const [tooltipVisible, setTooltipVisible] = useState(false);
+  const [gameOpen, setGameOpen] = useState(false);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -106,6 +108,10 @@ export default function PlainsProgram({
       transitioning={transitioning}
       transitionDirection={transitionDirection}
       dipToActive={dipToActive}
+      gameContent={<FarmingGame />}
+      isGameOpen={gameOpen}
+      onGameOpen={() => setGameOpen(true)}
+      onGameClose={() => setGameOpen(false)}
       picture={
         <div className="relative w-full">
           {/* Base image */}
