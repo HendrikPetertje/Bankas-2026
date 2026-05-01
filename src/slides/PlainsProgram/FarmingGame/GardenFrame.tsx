@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import GardenGrid from './GardenGrid';
 import HarvestOverlay from './HarvestOverlay';
 import cleaningFork from './images/button-images/cleaning-fork.png';
@@ -35,6 +36,30 @@ export default function GardenFrame({ token, initialGarden, onAuthExpired }: Gar
   } = useGarden(token, initialGarden);
 
   const [infoOpen, setInfoOpen] = useState(false);
+  const [cursorPos, setCursorPos] = useState<{ x: number; y: number } | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  // Track mouse position for custom cursor
+  useEffect(() => {
+    if (!activeTool) {
+      setCursorPos(null);
+      return;
+    }
+    function handleMove(e: MouseEvent) {
+      setCursorPos({ x: e.clientX, y: e.clientY });
+    }
+    function handleLeave() {
+      setCursorPos(null);
+    }
+    const el = containerRef.current;
+    if (!el) return;
+    el.addEventListener('mousemove', handleMove);
+    el.addEventListener('mouseleave', handleLeave);
+    return () => {
+      el.removeEventListener('mousemove', handleMove);
+      el.removeEventListener('mouseleave', handleLeave);
+    };
+  }, [activeTool]);
 
   if (authExpired) {
     onAuthExpired();
@@ -42,12 +67,12 @@ export default function GardenFrame({ token, initialGarden, onAuthExpired }: Gar
   }
 
   const cursorUrl = activeTool ? TOOL_CURSORS[activeTool] : null;
-  const cursorStyle = cursorUrl ? `url(${cursorUrl}) 16 16, pointer` : undefined;
 
   return (
     <div
+      ref={containerRef}
       className="flex flex-col relative"
-      style={{ cursor: cursorStyle }}
+      style={{ cursor: activeTool ? 'none' : undefined }}
     >
       {/* Header */}
       <div className="flex items-center gap-2 px-4 py-2">
@@ -182,6 +207,21 @@ export default function GardenFrame({ token, initialGarden, onAuthExpired }: Gar
           </div>
         </div>
       )}
+      {cursorUrl &&
+        cursorPos &&
+        createPortal(
+          <div
+            className="pointer-events-none fixed z-[9999] flex items-center justify-center w-12 h-12 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white/60"
+            style={{ left: cursorPos.x, top: cursorPos.y }}
+          >
+            <img
+              src={cursorUrl}
+              alt=""
+              className="w-8 h-8"
+            />
+          </div>,
+          document.body,
+        )}
     </div>
   );
 }

@@ -1,3 +1,8 @@
+import { useCallback, useEffect, useRef, useState } from 'react';
+import Tooltip from '../../../components/Tooltip/Tooltip';
+import cleaningFork from './images/button-images/cleaning-fork.png';
+import harvestingShears from './images/button-images/harvesting-shears.png';
+import wateringCan from './images/button-images/watering-can.png';
 import barren11 from './images/grid/1-1-barren.png';
 import barrenDry11 from './images/grid/1-1-barren-dry.png';
 import clean11 from './images/grid/1-1-clean.png';
@@ -34,14 +39,12 @@ import barren33 from './images/grid/3-3-barren.png';
 import barrenDry33 from './images/grid/3-3-barren-dry.png';
 import clean33 from './images/grid/3-3-clean.png';
 import cleanDry33 from './images/grid/3-3-clean-dry.png';
-// Grid tile images
 import base from './images/grid/base.png';
 import driedOut from './images/plant-overlays/dried-out-plant-overlay.png';
 import finishedCarrot from './images/plant-overlays/finished-carrot-overlay.png';
 import finishedLettuce from './images/plant-overlays/finished-lettuce-overlay.png';
 import finishedPumpkin from './images/plant-overlays/finished-pumkin-overlay.png';
 import finishedTomato from './images/plant-overlays/finished-tomato-overlay.png';
-// Plant overlays
 import seedOverlay from './images/plant-overlays/seed-overlay.png';
 import someWeeds from './images/plant-overlays/some-weeds-overlay.png';
 import sprout1 from './images/plant-overlays/sprout-1-overlay.png';
@@ -76,7 +79,6 @@ const CROP_OFFSETS: Record<number, { x: number; y: number }> = {
   9: { x: 765, y: 657 },
 };
 
-// Plot state tile lookup: [row-col][state][dry]
 type TileKey = `${1 | 2 | 3}-${1 | 2 | 3}`;
 const TILE_MAP: Record<TileKey, { barren: string; barrenDry: string; clean: string; cleanDry: string }> = {
   '1-1': { barren: barren11, barrenDry: barrenDry11, clean: clean11, cleanDry: cleanDry11 },
@@ -110,19 +112,21 @@ function plotToRowCol(plotNumber: number): TileKey {
   return `${row}-${col}`;
 }
 
-function isDry(lastWateredAt: string | null): boolean {
-  if (!lastWateredAt) return true;
-  return Date.now() - new Date(lastWateredAt).getTime() > 60 * 60 * 1000;
+// Returns opacity 0-1 for dry overlay: starts fading in at 55min, fully visible at 60min
+function getDryOpacity(lastWateredAt: string | null): number {
+  if (!lastWateredAt) return 1;
+  const elapsed = Date.now() - new Date(lastWateredAt).getTime();
+  const minutes = elapsed / (60 * 1000);
+  if (minutes >= 60) return 1;
+  if (minutes <= 55) return 0;
+  return (minutes - 55) / 5;
 }
 
-function getPlotTile(plot: Plot): string {
+function getPlotTiles(plot: Plot): { wet: string; dry: string } {
   const key = plotToRowCol(plot.number);
   const tiles = TILE_MAP[key];
-  const dry = isDry(plot.last_watered_at);
-
-  if (plot.state === 'BARREN') return dry ? tiles.barrenDry : tiles.barren;
-  // CLEANED and SEEDED both use clean tile
-  return dry ? tiles.cleanDry : tiles.clean;
+  if (plot.state === 'BARREN') return { wet: tiles.barren, dry: tiles.barrenDry };
+  return { wet: tiles.clean, dry: tiles.cleanDry };
 }
 
 interface CropOverlayInfo {
@@ -141,15 +145,12 @@ function getCropOverlay(plot: Plot, plants: Plant[]): CropOverlayInfo | null {
   const progress = elapsed / growTime;
   const isHarvestable = progress >= 1;
 
-  // Dried out at harvest with water_stars=1
   if (isHarvestable && plot.water_stars === 1) {
     return { src: driedOut, brownFilter: false };
   }
 
-  // Brown filter conditions
   const brownFilter = (plot.water_stars === 1 || plot.weed_stars === 1) && !isHarvestable;
 
-  // Growth stages
   let src: string;
   if (elapsed < 5 * 60) {
     src = seedOverlay;
@@ -166,13 +167,34 @@ function getCropOverlay(plot: Plot, plants: Plant[]): CropOverlayInfo | null {
   return { src, brownFilter };
 }
 
-function getWeedOverlay(plot: Plot): string | null {
+// Returns { src, opacity } for weed overlay with gradual fade-in
+function getWeedOverlay(plot: Plot): { src: string; opacity: number } | null {
   if (!plot.last_weeds_removed_at) return null;
   const elapsed = Date.now() - new Date(plot.last_weeds_removed_at).getTime();
   const minutes = elapsed / (60 * 1000);
-  if (minutes > 120) return weedOvergrowth;
-  if (minutes > 45) return someWeeds;
+
+  if (minutes >= 120) {
+    // Overgrowth: fully visible after 2h, fades in from 115-120min
+    if (minutes >= 120) return { src: weedOvergrowth, opacity: 1 };
+    return { src: weedOvergrowth, opacity: (minutes - 115) / 5 };
+  }
+  if (minutes >= 45) {
+    // Some weeds: fully visible after 45min, fades in from 40-45min
+    return { src: someWeeds, opacity: 1 };
+  }
+  if (minutes >= 40) {
+    // Fading in
+    return { src: someWeeds, opacity: (minutes - 40) / 5 };
+  }
   return null;
+}
+
+function formatDuration(ms: number): string {
+  const totalSeconds = Math.max(0, Math.floor(ms / 1000));
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+  return `${hours}:${String(minutes).padStart(2, '0')} ${String(seconds).padStart(2, '0')}s`;
 }
 
 interface GardenGridProps {
@@ -183,6 +205,50 @@ interface GardenGridProps {
 }
 
 export default function GardenGrid({ plots, plants, disabled, onPlotClick }: GardenGridProps) {
+  const [hoveredPlot, setHoveredPlot] = useState<number | null>(null);
+  const [anchorRect, setAnchorRect] = useState<DOMRect | null>(null);
+  const [, setTick] = useState(0);
+  const buttonRefs = useRef<Record<number, HTMLButtonElement | null>>({});
+
+  // Tick every second to update timers and opacity transitions
+  useEffect(() => {
+    const interval = setInterval(() => setTick((t) => t + 1), 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const handleMouseEnter = useCallback(
+    (plotNumber: number) => {
+      const plot = plots.find((p) => p.number === plotNumber);
+      if (!plot || plot.state !== 'SEEDED') return;
+      setHoveredPlot(plotNumber);
+      const btn = buttonRefs.current[plotNumber];
+      if (btn) setAnchorRect(btn.getBoundingClientRect());
+    },
+    [plots],
+  );
+
+  const handleMouseLeave = useCallback(() => {
+    setHoveredPlot(null);
+    setAnchorRect(null);
+  }, []);
+
+  // Compute tooltip content
+  const tooltipPlot = hoveredPlot ? plots.find((p) => p.number === hoveredPlot) : null;
+  const tooltipPlantInfo = tooltipPlot?.plant_kind ? plants.find((p) => p.kind === tooltipPlot.plant_kind) : null;
+
+  let harvestTimeLeft = 0;
+  let timeSinceWater = 0;
+  let timeSinceClean = 0;
+
+  if (tooltipPlot && tooltipPlantInfo && tooltipPlot.planted_at) {
+    const elapsed = Date.now() - new Date(tooltipPlot.planted_at).getTime();
+    harvestTimeLeft = Math.max(0, tooltipPlantInfo.growing_time_s * 1000 - elapsed);
+    timeSinceWater = tooltipPlot.last_watered_at ? Date.now() - new Date(tooltipPlot.last_watered_at).getTime() : 0;
+    timeSinceClean = tooltipPlot.last_weeds_removed_at
+      ? Date.now() - new Date(tooltipPlot.last_weeds_removed_at).getTime()
+      : 0;
+  }
+
   return (
     <div
       className="relative w-full"
@@ -197,24 +263,35 @@ export default function GardenGrid({ plots, plants, disabled, onPlotClick }: Gar
 
       {/* Plot tiles and overlays */}
       {plots.map((plot) => {
-        const tileSrc = getPlotTile(plot);
-        const weedSrc = getWeedOverlay(plot);
+        const tiles = getPlotTiles(plot);
+        const dryOpacity = getDryOpacity(plot.last_watered_at);
+        const weed = getWeedOverlay(plot);
         const crop = getCropOverlay(plot, plants);
         const offset = CROP_OFFSETS[plot.number];
 
         return (
           <div key={plot.number}>
-            {/* Plot state tile (full-size overlay) */}
+            {/* Wet tile (always visible as base) */}
             <img
-              src={tileSrc}
+              src={tiles.wet}
               alt=""
               className="absolute inset-0 w-full h-full pointer-events-none"
             />
 
-            {/* Weed overlay (behind plant, lower z) */}
-            {weedSrc && (
+            {/* Dry tile fading in on top */}
+            {dryOpacity > 0 && (
               <img
-                src={weedSrc}
+                src={tiles.dry}
+                alt=""
+                className="absolute inset-0 w-full h-full pointer-events-none"
+                style={{ opacity: dryOpacity }}
+              />
+            )}
+
+            {/* Weed overlay (behind plant, lower z) */}
+            {weed && (
+              <img
+                src={weed.src}
                 alt=""
                 className="absolute pointer-events-none"
                 style={{
@@ -223,6 +300,7 @@ export default function GardenGrid({ plots, plants, disabled, onPlotClick }: Gar
                   width: `${(CROP_WIDTH / BASE_WIDTH) * 100}%`,
                   height: `${(CROP_HEIGHT / BASE_HEIGHT) * 100}%`,
                   zIndex: 2,
+                  opacity: weed.opacity,
                 }}
               />
             )}
@@ -246,6 +324,9 @@ export default function GardenGrid({ plots, plants, disabled, onPlotClick }: Gar
 
             {/* Click target */}
             <button
+              ref={(el) => {
+                buttonRefs.current[plot.number] = el;
+              }}
               type="button"
               className="absolute border-0 bg-transparent p-0"
               style={{
@@ -259,10 +340,47 @@ export default function GardenGrid({ plots, plants, disabled, onPlotClick }: Gar
               }}
               disabled={disabled}
               onClick={() => onPlotClick(plot.number)}
+              onMouseEnter={() => handleMouseEnter(plot.number)}
+              onMouseLeave={handleMouseLeave}
             />
           </div>
         );
       })}
+
+      {/* Tooltip */}
+      <Tooltip
+        anchorRect={anchorRect}
+        visible={hoveredPlot !== null && tooltipPlot?.state === 'SEEDED'}
+      >
+        <div className="flex flex-col gap-1">
+          <div className="flex items-center gap-2">
+            <img
+              src={harvestingShears}
+              alt=""
+              className="w-4 h-4"
+            />
+            <span className="font-body text-xs text-text">
+              {harvestTimeLeft > 0 ? formatDuration(harvestTimeLeft) : 'Redo!'}
+            </span>
+          </div>
+          <div className="flex items-center gap-2">
+            <img
+              src={wateringCan}
+              alt=""
+              className="w-4 h-4"
+            />
+            <span className="font-body text-xs text-text">{formatDuration(timeSinceWater)} sedan</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <img
+              src={cleaningFork}
+              alt=""
+              className="w-4 h-4"
+            />
+            <span className="font-body text-xs text-text">{formatDuration(timeSinceClean)} sedan</span>
+          </div>
+        </div>
+      </Tooltip>
     </div>
   );
 }
