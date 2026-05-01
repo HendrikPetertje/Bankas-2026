@@ -12,7 +12,7 @@ The `RegistrationBanner` component SHALL display "Anmäl dig här nu" as a hyper
 
 #### Scenario: Visitor arrives after registration opens
 - **WHEN** the current date/time is on or after 2026-05-03T20:00:00 local time
-- **THEN** the banner displays "Anmäl dig här nu" as a link to `https://www.ecclisify.com/form/baptistsundsvall/lageranmalan26` opening in a new tab
+- **THEN** the banner displays "Anmäl dig här nu" as a link to the registration URL (configured via `VITE_REGISTRATION_URL` env var) opening in a new tab
 
 #### Scenario: Link opens in new tab
 - **WHEN** the visitor clicks the "Anmäl dig här nu" link

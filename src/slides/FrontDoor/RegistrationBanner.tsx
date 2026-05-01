@@ -1,4 +1,5 @@
 const REGISTRATION_OPENS = new Date(2026, 4, 3, 20, 0, 0);
+const REGISTRATION_URL = import.meta.env.VITE_REGISTRATION_URL as string;
 
 export default function RegistrationBanner() {
   const isOpen = new Date() >= REGISTRATION_OPENS;
@@ -8,7 +9,7 @@ export default function RegistrationBanner() {
       <div className="rotate-[3deg] bg-white border-t-2 border-b-2 border-gold px-6 py-3 text-center">
         {isOpen ? (
           <a
-            href="https://www.ecclisify.com/form/baptistsundsvall/lageranmalan26"
+            href={REGISTRATION_URL}
             target="_blank"
             rel="noopener noreferrer"
             className="font-display text-2xl text-text hover:text-pine transition-colors"
