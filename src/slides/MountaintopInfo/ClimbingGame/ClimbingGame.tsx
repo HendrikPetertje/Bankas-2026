@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import LoadingScreen from '../../../components/LoadingScreen/LoadingScreen';
 import type { CharacterKind } from './assets/Character';
 import { defaultLevel } from './assets/defaultLevel';
@@ -20,6 +20,7 @@ export default function ClimbingGame() {
   const [selectedKind, setSelectedKind] = useState<CharacterKind>('female');
   const [elapsedMs, setElapsedMs] = useState(0);
   const gameKeyRef = useRef(0);
+  const transitionTimeoutRef = useRef<number | null>(null);
   const [images, setImages] = useState<{ asset: HTMLImageElement; platform: HTMLImageElement } | null>(null);
 
   const assets = useMemo(() => GAME_ASSETS, []);
@@ -39,11 +40,16 @@ export default function ClimbingGame() {
   }, []);
 
   const handleSelect = useCallback((kind: CharacterKind) => {
+    if (transitionTimeoutRef.current !== null) {
+      window.clearTimeout(transitionTimeoutRef.current);
+    }
+
     setSelectedKind(kind);
     setScreen('fade');
     gameKeyRef.current += 1;
 
-    setTimeout(() => {
+    transitionTimeoutRef.current = window.setTimeout(() => {
+      transitionTimeoutRef.current = null;
       setScreen('playing');
     }, 1000);
   }, []);
@@ -54,7 +60,22 @@ export default function ClimbingGame() {
   }, []);
 
   const handlePlayAgain = useCallback(() => {
+    if (transitionTimeoutRef.current !== null) {
+      window.clearTimeout(transitionTimeoutRef.current);
+      transitionTimeoutRef.current = null;
+    }
+
+    setElapsedMs(0);
+    gameKeyRef.current += 1;
     setScreen('intro');
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (transitionTimeoutRef.current !== null) {
+        window.clearTimeout(transitionTimeoutRef.current);
+      }
+    };
   }, []);
 
   if (!loaded) {
