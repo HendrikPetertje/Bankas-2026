@@ -1,4 +1,5 @@
-const REGISTRATION_OPENS = new Date(2026, 4, 3, 20, 0, 0);
+// registration opens 3 may at 20:00 CET
+const REGISTRATION_OPENS = new Date('2024-05-03T20:00:00+02:00');
 const REGISTRATION_URL = import.meta.env.VITE_REGISTRATION_URL as string;
 
 export default function RegistrationBanner() {
