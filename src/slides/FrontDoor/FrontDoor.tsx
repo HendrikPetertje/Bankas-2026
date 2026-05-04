@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+
 import smallBird from './images/small-bird.png';
 import smallCloud1 from './images/small-cloud-1.png';
 import smallCloud2 from './images/small-cloud-2.png';
@@ -27,7 +28,6 @@ type TransitionPhase = 'idle' | 'active';
 
 export default function FrontDoor({ onNavigate }: FrontDoorProps) {
   const [activeOverlay, setActiveOverlay] = useState(0);
-  const [tooltipVisible, setTooltipVisible] = useState(false);
   const [transition, setTransition] = useState<TransitionPhase>('idle');
   const [doorHovered, setDoorHovered] = useState(false);
   const transitionRef = useRef<TransitionPhase>('idle');
@@ -38,12 +38,6 @@ export default function FrontDoor({ onNavigate }: FrontDoorProps) {
       setActiveOverlay((prev) => (prev + 1) % 4);
     }, 1000);
     return () => clearInterval(interval);
-  }, []);
-
-  // Delayed tooltip
-  useEffect(() => {
-    const timeout = setTimeout(() => setTooltipVisible(true), 3000);
-    return () => clearTimeout(timeout);
   }, []);
 
   const handleDoorClick = () => {
@@ -83,6 +77,11 @@ export default function FrontDoor({ onNavigate }: FrontDoorProps) {
         </div>
 
         <RegistrationBanner />
+
+        {/* Navigation hint — below the banner, inside the sky area so it stays in flow */}
+        <p className="z-20 mb-6 px-6 text-center text-xl font-bold font-body text-subtle">
+          Eller klicka på den glödande dörren nedan för mer info &amp; spel
+        </p>
       </div>
 
       {/* Door image with overlays */}
@@ -134,14 +133,6 @@ export default function FrontDoor({ onNavigate }: FrontDoorProps) {
           className="absolute inset-0 z-20 cursor-pointer md:top-[52%] md:left-[44%] md:h-[23%] md:w-[12%] md:inset-auto"
         />
       </div>
-
-      {/* Tooltip */}
-      <p
-        className="z-20 mt-4 mb-8 text-base text-subtle transition-opacity duration-700"
-        style={{ opacity: tooltipVisible ? 1 : 0 }}
-      >
-        Tryck på dörren för att fortsätta
-      </p>
 
       {/* Transition overlay — always mounted, starts transparent */}
       <div
