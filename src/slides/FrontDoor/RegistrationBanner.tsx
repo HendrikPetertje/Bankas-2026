@@ -15,7 +15,7 @@ export default function RegistrationBanner() {
             rel="noopener noreferrer"
             className="font-display text-2xl text-text hover:text-pine transition-colors"
           >
-            Anmäl dig här nu
+            ↠ Anmäl dig här nu ↞
           </a>
         ) : (
           <p className="font-display text-2xl text-text">Anmälan öppnar kl 20:00 den 3 maj</p>
