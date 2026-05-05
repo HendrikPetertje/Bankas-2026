@@ -172,9 +172,12 @@ export default function Slide({
 
       {/* Game modal — full-screen mobile, max-width desktop, backdrop does NOT dismiss */}
       {gameContent && isGameOpen && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/50">
+        <div className="fixed inset-0 z-[60] flex items-stretch justify-center overflow-y-auto bg-black/50 md:items-center md:p-8">
           {/* Modal container */}
-          <div className="relative z-10 flex max-h-full w-full flex-col overflow-hidden backdrop-blur-2xl bg-base/70 backdrop-saturate-150 md:my-8 md:max-h-[calc(100vh-4rem)] md:max-w-2xl md:rounded-2xl md:shadow-xl md:overflow-y-auto">
+          <div
+            className="relative z-10 flex h-[100svh] w-full flex-col overflow-x-hidden overflow-y-auto bg-base/70 backdrop-blur-2xl backdrop-saturate-150 md:h-auto md:max-h-[calc(100svh-4rem)] md:max-w-2xl md:rounded-2xl md:shadow-xl"
+            style={{ minHeight: 'min(calc((min(42rem, 100vw - 4rem)) * 16 / 9), calc(100svh - 4rem))' }}
+          >
             {/* Close button */}
             <button
               type="button"
