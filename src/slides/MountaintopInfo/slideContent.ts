@@ -16,7 +16,7 @@ Packa för både solsken och regn; regnkläder, stövlar och varma kläder är v
 En fullständig packlista skickas ut innan lägret.
 
 **Tider**  
-Start: Lägret startar kl 10:30 onsdagen den 25 juni med incheckning.
+Start: Lägret startar kl 10:30 onsdagen den 24 juni med incheckning.
 
 **Avslutning**  
 Lägret avslutas den 27 juni kl 15:00.  
