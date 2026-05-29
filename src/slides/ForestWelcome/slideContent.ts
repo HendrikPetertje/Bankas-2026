@@ -17,5 +17,5 @@ Minesverset som vi kommer att utforska tillsammans under lägret är:
 
 _1 Petrusbrevet 2:9_
 
-**Anmälan öppnar Söndag 3 maj 20:00**
+**Anmälan har stängts, men du kan fortfarande [anmäla dig till reservlistan](https://www.ecclisify.com/form/baptistsundsvall/reservllista-lgeranmlan)**
 `;

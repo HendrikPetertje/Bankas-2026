@@ -13,9 +13,9 @@ export default function RegistrationBanner() {
             href={REGISTRATION_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="font-display text-2xl text-text hover:text-pine transition-colors"
+            className="font-display text-1xl text-text hover:text-pine transition-colors"
           >
-            ↠ Anmäl dig här nu ↞
+            ↠ Anmäl dig till reservlistan ↞
           </a>
         ) : (
           <p className="font-display text-2xl text-text">Anmälan öppnar kl 20:00 den 3 maj</p>
